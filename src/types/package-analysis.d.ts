@@ -9,7 +9,7 @@ interface EmbeddedFile {
 
 /** Features that, if present in a package, can be seen as
  * evidences of file reading */
-interface FileReadingHints {
+interface FileReadingClues {
     webResponse: boolean
     includeBinaryFile: boolean
     includePath: boolean
@@ -19,7 +19,7 @@ interface FileReadingHints {
 
 /** Features that, if present in a package, can be seen as
  * evidences of file writing */
-interface FileWritingHints {
+interface FileWritingClues {
     statLog: boolean
     statLogFile: boolean
     saveTimeDemo: boolean
@@ -28,7 +28,7 @@ interface FileWritingHints {
 
 /** Features that, if present in a package, can be seen as
  * evidences of file executing */
-interface FileExecutingHints {
+interface FileExecutingClues {
     localBatcherURL: boolean
     worldBatcherURL: boolean
     worldBatcherParams: boolean
@@ -48,7 +48,7 @@ interface FileExecutingHints {
 
 /** Features that, if present in a package, can be seen as
  * evidences of console reading or keylogging */
-interface ConsoleReadingHints {
+interface ConsoleReadingClues {
     typedStr: boolean
     history: boolean
     eInputKey: boolean
@@ -60,10 +60,10 @@ interface ConsoleReadingHints {
 /** Package analysis result about suspicious content */
 interface PackageAnalysis {
     embeddedFiles: EmbeddedFile[]
-    fileReadingHints: FileReadingHints
-    fileWritingHints: FileWritingHints
-    fileExecutingHints: FileExecutingHints
-    consoleReadingHints: ConsoleReadingHints
+    fileReadingClues: FileReadingClues
+    fileWritingClues: FileWritingClues
+    fileExecutingClues: FileExecutingClues
+    consoleReadingClues: ConsoleReadingClues
     /** URLs that may be opened without user's consent */
     urls: string[]
     readsFromClipboard: boolean

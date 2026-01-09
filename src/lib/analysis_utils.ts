@@ -57,18 +57,18 @@ async function analyzePkg(pkg: UTReader.reader) {
 
     const asys: PackageAnalysis = {
         embeddedFiles: embFiles,
-        fileReadingHints: {
+        fileReadingClues: {
             includeBinaryFile: hasObj('includeBinaryFile', 'Function', 'WebResponse'),
             includePath: hasObj('includePath', 'StrProperty', 'WebResponse'),
             webResponse: hasObj('WebResponse', 'Class', 'UWeb'),
             sendBinary: hasObj('sendBinary', 'Function', 'WebResponse'),
         },
-        fileWritingHints: {
+        fileWritingClues: {
             statLog: hasObj('StatLog', 'Class', 'Engine'),
             statLogFile: hasObj('StatLogFile', 'Class', 'Engine'),
             saveTimeDemo: hasName('saveTimeDemo'),
         },
-        fileExecutingHints: {
+        fileExecutingClues: {
             localBatcherURL: hasObj('localBatcherURL', 'StrProperty', 'StatLog'),
             worldBatcherURL: hasObj('worldBatcherURL', 'StrProperty', 'StatLog'),
             worldBatcherParams: hasObj('worldBatcherParams', 'StrProperty', 'StatLog'),
@@ -79,7 +79,7 @@ async function analyzePkg(pkg: UTReader.reader) {
             batchLocal: hasObj('batchLocal', 'Function', 'StatLog'),
             fileProtocol: hasStrStart('file:///'),
         },
-        consoleReadingHints: {
+        consoleReadingClues: {
             typedStr: hasObj('typedStr', 'StrProperty', 'Console'),
             history: hasObj('history', 'StrProperty', 'Console'),
             eInputKey: hasObj('EInputKey', 'Enum', 'Console'),
