@@ -69,14 +69,22 @@ async function analyzePkg(pkg: UTReader.reader) {
             saveTimeDemo: hasName('saveTimeDemo'),
         },
         fileExecutingHints: {
+            localBatcherURL: hasObj('localBatcherURL', 'StrProperty', 'StatLog'),
+            worldBatcherURL: hasObj('worldBatcherURL', 'StrProperty', 'StatLog'),
+            worldBatcherParams: hasObj('worldBatcherParams', 'StrProperty', 'StatLog'),
+            localLogDir: hasObj('localLogDir', 'StrProperty', 'StatLog'),
             executeLocalLogBatcher: hasObj('ExecuteLocalLogBatcher', 'Function', 'StatLog'),
             executeWorldLogBatcher: hasObj('ExecuteWorldLogBatcher', 'Function', 'StatLog'),
+            executeSilentLogBatcher: hasObj('executeSilentLogBatcher', 'Function', 'StatLog'),
+            batchLocal: hasObj('batchLocal', 'Function', 'StatLog'),
             fileProtocol: hasStrStart('file:///'),
         },
-        consoleKeyloggingHints: {
+        consoleReadingHints: {
+            typedStr: hasObj('typedStr', 'StrProperty', 'Console'),
+            history: hasObj('history', 'StrProperty', 'Console'),
             eInputKey: hasObj('EInputKey', 'Enum', 'Console'),
             eInputAction: hasObj('EInputAction', 'Enum', 'Console'),
-            keyEvent: hasObj('keyEvent', 'Function', 'Console')
+            keyEvent: hasObj('keyEvent', 'Function', 'Console'),
         },
         urls: findUrls(),
         readsFromClipboard: hasName('pasteFromClipboard'),
@@ -90,7 +98,7 @@ async function analyzePkg(pkg: UTReader.reader) {
         opensOSWindow: hasName('badParameters'),
         extractsEmbeddedFiles: hasSubStr('BatchExportCommandlet'),
     };
-
+    
     return asys;
 }
 

@@ -29,15 +29,28 @@ interface FileWritingHints {
 /** Features that, if present in a package, can be seen as
  * evidences of file executing */
 interface FileExecutingHints {
+    localBatcherURL: boolean
+    worldBatcherURL: boolean
+    worldBatcherParams: boolean
+    localLogDir: boolean
     executeLocalLogBatcher: boolean
     executeWorldLogBatcher: boolean
+    executeSilentLogBatcher: boolean
+    batchLocal: boolean
     fileProtocol: boolean
+    // Unused
+    //localBatcherParams
+    //localStatsURL
+    //worldStatsURL
+    //worldLogDir
 }
 
 
 /** Features that, if present in a package, can be seen as
- * evidences of console keylogging */
-interface ConsoleKeyloggingHints {
+ * evidences of console reading or keylogging */
+interface ConsoleReadingHints {
+    typedStr: boolean
+    history: boolean
     eInputKey: boolean
     eInputAction: boolean
     keyEvent: boolean
@@ -50,7 +63,7 @@ interface PackageAnalysis {
     fileReadingHints: FileReadingHints
     fileWritingHints: FileWritingHints
     fileExecutingHints: FileExecutingHints
-    consoleKeyloggingHints: ConsoleKeyloggingHints
+    consoleReadingHints: ConsoleReadingHints
     /** URLs that may be opened without user's consent */
     urls: string[]
     readsFromClipboard: boolean
@@ -69,4 +82,24 @@ interface PackageAnalysis {
     readsComputerName: boolean
     opensOSWindow: boolean
     extractsEmbeddedFiles: boolean
+}
+
+
+interface PackageAnalysisSection {
+    name: string
+    title: string
+    description: string
+    contentSeverity: Extract<
+        VariantProps<typeof Badge>['variant'],
+        'neutral' | 'suspicious' | 'dangerous'
+    >
+    analysisKeys: (keyof PackageAnalysis)[]
+}
+
+
+interface AnalyzedPackage {
+    filename: string
+    // Old packages do not have a GUID
+    guid?: string,
+    analysis: PackageAnalysis
 }
