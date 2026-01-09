@@ -7,7 +7,7 @@ function OpenSourceLink() {
     return (
         <a href={__OPEN_SOURCE_URL__} target='_blank'>
             <GitHubIcon
-                className="fixed top-4 right-4 w-[1em] h-[1em] [&_path]:fill-muted-foreground hover:[&_path]:fill-accent-foreground [&_path]:transition-colors [&_path]:duration-300"
+                className="fixed top-4 right-4 text-xl w-[1em] h-[1em] [&_path]:fill-muted-foreground hover:[&_path]:fill-accent-foreground [&_path]:transition-colors [&_path]:duration-300"
                 // Match width/height defined in the svg file.
                 viewBox="0 0 98 96"
             />

@@ -152,12 +152,6 @@
   --toastify-color-progress-dark: #fff;
 }
 
-.Toastify__toast {
-  gap: .25em;
-  font-size: var(--text-sm);
-  backdrop-filter: blur(4px);
-}
-
 @theme {
   --color-neutral-foreground: oklch(58.971% 0.00007 271.152);
   --color-suspicious: oklch(68.998% 0.13879 58.064);
@@ -166,9 +160,16 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 text-xl;
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply text-xl
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .Toastify__toast {
+    @apply text-sm gap-0.5 backdrop-blur-xs
   }
 }
