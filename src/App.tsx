@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { ToastContainer, Zoom } from 'react-toastify';
 
-import { PackageAnalysesContext } from '@/contexts';
+import { PackagesContext } from '@/contexts';
 
 import { Separator } from '@/components/ui/separator';
 import { OfflineAppBadge } from '@/components/Badges';
@@ -15,7 +15,7 @@ import PackageAnalysesContainer from '@/components/PackageAnalysesContainer';
 
 /** An app to check Unreal Engine packages for suspicious content */
 function App() {
-	const [analyses, setAnalyses] = useState<PackageAnalysis[]>([]);
+	const [analyzedPkgs, setAnalyzedPkgs] = useState<AnalyzedPackage[]>([]);
 	
 
 	return (<>
@@ -24,8 +24,8 @@ function App() {
 			<OpenSourceLink />
 
 			<div className='flex flex-row w-full h-full justify-evenly items-center'>
-				<PackageAnalysesContext.Provider value={{
-					analyses, setAnalyses
+				<PackagesContext.Provider value={{
+					analyzedPkgs, setAnalyzedPkgs
 				}}>
 					<div className='w-[40%] flex flex-col gap-10 justify-center items-center'>
 						<Header />
@@ -37,7 +37,7 @@ function App() {
 					<div className='w-[40%] h-[80%]'>
 						<PackageAnalysesContainer />
 					</div>
-				</PackageAnalysesContext.Provider>
+				</PackagesContext.Provider>
 			</div>
 		</main>
 

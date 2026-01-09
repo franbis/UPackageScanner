@@ -3,19 +3,17 @@ import type { Dispatch, SetStateAction } from "react";
 
 
 
-interface PackageAnalysesContextArgs {
-    /** Package analysis results */
-    analyses: PackageAnalysis[]
-    /** Function to analyze a package */
-    setAnalyses: Dispatch<SetStateAction<PackageAnalysis[]>>
+interface PackagesContextArgs {
+    /** Packages data */
+    analyzedPkgs: AnalyzedPackage[]
+    /** Function to add a package to 'pkgs' */
+    setAnalyzedPkgs: Dispatch<SetStateAction<AnalyzedPackage[]>>
 }
 /** Context for package analyses */
-const PackageAnalysesContext = createContext<PackageAnalysesContextArgs | null>(null);
+const PackagesContext = createContext<PackagesContextArgs | null>(null);
 
 
 
 export {
-    type PackageAnalysesContextArgs,
-    
-    PackageAnalysesContext
+    PackagesContext
 }

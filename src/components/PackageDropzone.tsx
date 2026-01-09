@@ -1,4 +1,4 @@
-import { usePackageAnalyses } from "@/hooks/usePackageAnalyses";
+import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 import { parsePkg } from "@/lib/package_utils";
 import { ScanLine } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -9,13 +9,13 @@ import { toast } from "react-toastify";
 /** A file picker where packages, picked or dropped into a
  * drop zone, get checked for suspicious content */
 function PackageDropzone() {
-    const { analyzePackage } = usePackageAnalyses();
+    const { analyzePkg } = useAnalyzedPackages();
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles: File[]) => {
-            acceptedFiles.forEach(async (blob) => {
+            acceptedFiles.forEach(async (file) => {
                 try {
-                    const pkg = await parsePkg(blob);
-                    analyzePackage(pkg);
+                    const pkg = await parsePkg(file);
+                    analyzePkg(pkg);
                 }
                 catch {
                     toast.error('The file is not a standard Unreal Engine 1 package');

@@ -11,6 +11,7 @@ const badgeVariants = cva(
         secondary: "border-secondary [--dot:theme(colors.secondary.DEFAULT)]",
         destructive: "border-destructive [--dot:theme(colors.destructive.DEFAULT)]",
         outline: "border-foreground [--dot:theme(colors.foreground)]",
+        
         neutral: "border-muted-foreground [--dot:theme(colors.muted.foreground)]",
         suspicious: "border-suspicious [--dot:theme(colors.suspicious.DEFAULT)]",
         dangerous: "border-dangerous [--dot:theme(colors.dangerous.DEFAULT)]",
