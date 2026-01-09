@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
-import type { VariantProps } from "class-variance-authority";
-import type { Badge } from "./ui/badge";
+import packageAnalysisItemsData from "@/data/packageAnalysisItemsData";
 
 
 
@@ -11,32 +10,20 @@ interface PackageAnalysisProps {
     analyzedPkg: AnalyzedPackage
 }
 /** A dashboard to display a package's analysis results */
-function PackageAnalysis({ analyzedPkg: data }: PackageAnalysisProps) {
+function PackageAnalysis({ analyzedPkg }: PackageAnalysisProps) {
     return (
         <Card className='h-full'>
             <CardHeader>
-                <p>GUID: {data.guid ?? '[Not available]'}</p>
+                <p>GUID: {analyzedPkg.guid ?? '[Not available]'}</p>
             </CardHeader>
-            <CardContent>
-                <Accordion type="multiple" defaultValue={['item-1', 'item-2', 'item-3']}>
-                    <PackageAnalysisItem
-                        name='aaa'
-                        title='aaa'
-                        analysisData={data.analysis}
-                        contentSeverity='neutral'
-                    />
-                    <PackageAnalysisItem
-                        name='bbb'
-                        title='bbb'
-                        analysisData={data.analysis}
-                        contentSeverity='neutral'
-                    />
-                    <PackageAnalysisItem
-                        name='ccc'
-                        title='ccc'
-                        analysisData={data.analysis}
-                        contentSeverity='neutral'
-                    />
+            <CardContent className='overflow-y-scroll scrollbar-thin'>
+                <Accordion type="multiple" /*defaultValue={['item-1', 'item-2', 'item-3']}*/>
+                    {packageAnalysisItemsData.map(d => (
+                        <PackageAnalysisItem
+                            analysisSection={d}
+                            analysisData={analyzedPkg.analysis}
+                        />
+                    ))}
                 </Accordion>
             </CardContent>
         </Card>
@@ -45,29 +32,24 @@ function PackageAnalysis({ analyzedPkg: data }: PackageAnalysisProps) {
 
 
 interface PackageAnalysisItemProps {
-    name: string
-    title: string
+    analysisSection: PackageAnalysisSection
     /** Package's analysis data */
     analysisData: Partial<PackageAnalysis>
-    contentSeverity: Extract<
-        VariantProps<typeof Badge>['variant'],
-        'neutral' | 'suspicious' | 'dangerous'
-    >
 }
 /** A dashboard's item to display part of a package's analysis results */
-function PackageAnalysisItem({ name, title, analysisData, contentSeverity }: PackageAnalysisItemProps) {
+function PackageAnalysisItem({ analysisSection, analysisData }: PackageAnalysisItemProps) {
     const getBadge = () => {
-        if (contentSeverity === 'neutral') return <NeutralBadge />;
-        if (contentSeverity === 'suspicious') return <SuspiciousBadge />;
-        if (contentSeverity === 'dangerous') return <DangerousBadge />;
+        if (analysisSection.contentSeverity === 'neutral') return <NeutralBadge />;
+        if (analysisSection.contentSeverity === 'suspicious') return <SuspiciousBadge />;
+        if (analysisSection.contentSeverity === 'dangerous') return <DangerousBadge />;
     }
 
     return (
-        <AccordionItem value={name}>
-            <AccordionTrigger className='flex-row-reverse justify-end hover:no-underline cursor-pointer'>{getBadge()} {title}</AccordionTrigger>
+        <AccordionItem value={analysisSection.name}>
+            <AccordionTrigger className='flex-row-reverse justify-end hover:no-underline cursor-pointer'>{getBadge()} {analysisSection.title}</AccordionTrigger>
             <AccordionContent>
                 <div className='pl-10'>
-                    Text
+                    {analysisSection.description}
                 </div>
             </AccordionContent>
         </AccordionItem>

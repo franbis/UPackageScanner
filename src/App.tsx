@@ -34,7 +34,7 @@ function App() {
 
 					<Separator orientation='vertical' className='h-[80%]!' />
 
-					<div className='w-[40%] h-[80%]'>
+					<div className='w-[40%] h-[85%]'>
 						<PackageAnalysesContainer />
 					</div>
 				</PackagesContext.Provider>

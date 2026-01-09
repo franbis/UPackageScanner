@@ -5,7 +5,6 @@ import PackageAnalysis from "@/components/PackageAnalysis";
 
 
 
-// TODO - Populate the tabs with data provided by 'PackageAnalysesContext'
 /** Container of package analysis results, each have their own tab */
 function PackageAnalysesContainer() {
     const { analyzedPkgs } = useAnalyzedPackages();
@@ -21,7 +20,7 @@ function PackageAnalysesContainer() {
             </TabsList>
 
             {analyzedPkgs.map(p => (
-                <TabsContent value={p.filename}>
+                <TabsContent value={p.filename} className='h-[80%]'>
                     <PackageAnalysis analyzedPkg={p} />
                 </TabsContent>
             ))}

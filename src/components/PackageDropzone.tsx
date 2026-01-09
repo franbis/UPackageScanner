@@ -1,3 +1,6 @@
+// @ts-expect-error Third party JS library
+import UTReader from '@/lib/third_party/UTPackage.js/UTReader';
+
 import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 import { parsePkg } from "@/lib/package_utils";
 import { ScanLine } from "lucide-react";
@@ -14,8 +17,8 @@ function PackageDropzone() {
         onDrop: (acceptedFiles: File[]) => {
             acceptedFiles.forEach(async (file) => {
                 try {
-                    const pkg = await parsePkg(file);
-                    analyzePkg(pkg);
+                    const pkg: UTReader.reader = await parsePkg(file);
+                    analyzePkg({ filename: file.name, pkg });
                 }
                 catch {
                     toast.error('The file is not a standard Unreal Engine 1 package');

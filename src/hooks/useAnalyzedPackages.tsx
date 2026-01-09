@@ -14,15 +14,16 @@ import { analyzePkg } from "@/lib/analysis_utils";
 function useAnalyzedPackages() {
     const pkgsCtx = useContext(PackagesContext);
 
-    const _analyzePkg = async (pkg: UTReader.reader) => {
-        const asys = await analyzePkg(pkg);
-        pkgsCtx?.setAnalyzedPkgs(pkgs => {
-            return [...pkgs, {
-                filename: 'test',
-                guid: 'test',
-                analysis: asys,
-            }];
-        });
+    interface _AnalyzePkgArgs {
+        filename: AnalyzedPackage['filename']
+        pkg: UTReader.reader
+    }
+    const _analyzePkg = async ({ filename, pkg }: _AnalyzePkgArgs) => {
+        const analysis = await analyzePkg(pkg);
+        pkgsCtx?.setAnalyzedPkgs(pkgs => [
+            ...pkgs,
+            {filename, guid: pkg.header.guid, analysis}
+        ]);
     }
 
     return {
