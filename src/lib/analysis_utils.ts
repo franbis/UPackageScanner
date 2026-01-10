@@ -103,7 +103,25 @@ async function analyzePkg(pkg: UTReader.reader) {
 }
 
 
+/** Get every boolean entry from analysis data */
+function getPresenceEntries(data: Partial<PackageAnalysis>): Record<string, boolean> {
+    const entries: [string, boolean][] = [];
+
+    for (const [k, v] of Object.entries(data))
+        if (typeof v === 'boolean') {
+            entries.push([k, v]);
+        } else if (v && typeof v === 'object') {
+            for (const [subK, subV] of Object.entries(v))
+                if (typeof subV === 'boolean')
+                    entries.push([subK, subV]);
+        }
+
+    return Object.fromEntries(entries);
+}
+
+
 
 export {
-    analyzePkg
+    analyzePkg,
+    getPresenceEntries,
 }

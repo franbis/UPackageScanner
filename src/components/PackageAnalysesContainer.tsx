@@ -1,7 +1,7 @@
 import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PackageAnalysis from "@/components/PackageAnalysis";
+import PackageAnalysisCard from "@/components/PackageAnalysisCard";
 
 
 
@@ -21,7 +21,7 @@ function PackageAnalysesContainer() {
 
             {analyzedPkgs.map(p => (
                 <TabsContent value={p.filename} className='h-[80%]'>
-                    <PackageAnalysis analyzedPkg={p} />
+                    <PackageAnalysisCard analyzedPkg={p} />
                 </TabsContent>
             ))}
         </Tabs>

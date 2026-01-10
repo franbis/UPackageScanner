@@ -1,4 +1,4 @@
-const packageAnalysisItemsData: PackageAnalysisSection[] = [
+const pkgAsysSectionsData: PackageAnalysisSection[] = [
     {
         name: 'file_embedding',
         title: 'File Embedding',
@@ -100,4 +100,4 @@ const packageAnalysisItemsData: PackageAnalysisSection[] = [
 
 
 
-export default packageAnalysisItemsData;
+export default pkgAsysSectionsData;
