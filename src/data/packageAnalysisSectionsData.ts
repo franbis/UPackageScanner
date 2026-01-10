@@ -24,7 +24,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "UnrealScript can write files anywhere on both the server and client machines. Since deletion involves writing, this means UnrealScript can also delete files and directories (e.g. 'System32' on Windows).",
         contentSeverity: 'dangerous',
         analysisKeys: [
-            'fileReadingClues'
+            'fileWritingClues'
         ]
     },
     {
