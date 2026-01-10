@@ -5,6 +5,9 @@ import pkgAsysSectionsData from "@/data/packageAnalysisSectionsData";
 import { Separator } from "./ui/separator";
 import { Checkbox } from "./ui/checkbox";
 import { getPresenceEntries } from "@/lib/analysis_utils";
+import { Button } from "./ui/button";
+import { Copy } from "lucide-react";
+import { toast } from "react-toastify";
 
 
 
@@ -17,10 +20,30 @@ function PackageAnalysisCard({ analyzedPkg }: PackageAnalysisCardProps) {
     const expandedSections = pkgAsysSectionsData.map(e => e.name);
 
 
+    const copyGUID = () => {
+        navigator.clipboard.writeText(analyzedPkg.guid as string);
+        toast.success("Package's GUID copied!");
+    };
+    
+
     return (
         <Card className='h-full'>
             <CardHeader>
-                <p className='text-sm'>GUID: {analyzedPkg.guid ?? '[Not available]'}</p>
+                <p className='flex items-center gap-2 text-sm'>
+                    <p>GUID</p>
+                    <Card className='flex flex-row items-center p-2 gap-3 text-muted-foreground'>
+                        {analyzedPkg.guid ?? 'Not available'}
+                        {analyzedPkg.guid &&
+                            <Button
+                                variant='ghost'
+                                className="p-0 w-5 h-auto cursor-pointer opacity-50"
+                                onClick={copyGUID}
+                            >
+                                <Copy className='transform scale-x-[-1] rotate-180' />
+                            </Button>
+                        }
+                    </Card>
+                </p>
             </CardHeader>
             <CardContent className='overflow-y-scroll scrollbar-thin'>
                 <Accordion type="multiple" defaultValue={expandedSections}>
