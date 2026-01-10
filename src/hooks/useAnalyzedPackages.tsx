@@ -19,6 +19,9 @@ function useAnalyzedPackages() {
         pkg: UTReader.reader
     }
     const _analyzePkg = async ({ filename, pkg }: _AnalyzePkgArgs) => {
+        if (pkgsCtx?.analyzedPkgs.find(p => p.filename === filename))
+            return;
+
         const analysis = await analyzePkg(pkg);
         pkgsCtx?.setAnalyzedPkgs(pkgs => [
             ...pkgs,
@@ -30,7 +33,8 @@ function useAnalyzedPackages() {
     const removePkg = (filename: AnalyzedPackage['filename']) => {
         pkgsCtx?.setAnalyzedPkgs(pkgs => {
             const idx = pkgs.findIndex(p => p.filename === filename);
-            pkgs.splice(idx, 1);
+            if (idx !== -1)
+                pkgs.splice(idx, 1);
             return [...pkgs];
         });
     };
