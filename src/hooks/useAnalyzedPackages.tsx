@@ -24,11 +24,22 @@ function useAnalyzedPackages() {
             ...pkgs,
             {filename, guid: pkg.header.guid, analysis}
         ]);
-    }
+    };
+
+
+    const removePkg = (filename: AnalyzedPackage['filename']) => {
+        pkgsCtx?.setAnalyzedPkgs(pkgs => {
+            const idx = pkgs.findIndex(p => p.filename === filename);
+            pkgs.splice(idx, 1);
+            return [...pkgs];
+        });
+    };
+
 
     return {
         analyzedPkgs: pkgsCtx?.analyzedPkgs ?? [],
-        analyzePkg: _analyzePkg
+        analyzePkg: _analyzePkg,
+        removePkg,
     }
 }
 

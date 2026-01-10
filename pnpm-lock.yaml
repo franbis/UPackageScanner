@@ -56,6 +56,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.18
         version: 4.1.18
+      use-draggable-scroll:
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.2.3)
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.1
@@ -1685,6 +1688,12 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  use-draggable-scroll@0.1.0:
+    resolution: {integrity: sha512-mX6nT3cUqOTtA+8QUH9HfdKtzI6Oquj9QIB0wALWZYmWogNQ746MaUcmqKOKCIlt2UH6egxhSKNPiSlfEqmKhA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+
   vite-plugin-svgr@4.5.0:
     resolution: {integrity: sha512-W+uoSpmVkSmNOGPSsDCWVW/DDAyv+9fap9AZXBvWiQqrboJ08j2vh0tFxTD/LjwqwAd3yYSVJgm54S/1GhbdnA==}
     peerDependencies:
@@ -3219,6 +3228,10 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  use-draggable-scroll@0.1.0(react@19.2.3):
+    dependencies:
+      react: 19.2.3
 
   vite-plugin-svgr@4.5.0(rollup@4.54.0)(typescript@5.9.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)):
     dependencies:
