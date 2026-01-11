@@ -1,32 +1,24 @@
+import { useEffect, useRef, useState } from "react";
+
 import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PackageAnalysisCard from "@/components/PackageAnalysisCard";
 import { Button } from "./ui/button";
-import { XIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import PackageAnalysisCard from "@/components/PackageAnalysisCard";
 
-import useDraggableScroll from "use-draggable-scroll";
+import ScrollContainer from 'react-indiana-drag-scroll';
+
+import { XIcon } from "lucide-react";
 
 
 
 /** Container of package analysis results, each have their own tab */
 function PackageAnalysesContainer() {
-    const tabsListRef = useRef<HTMLDivElement>(null);
-
-    const { onMouseDown } = useDraggableScroll(tabsListRef as React.RefObject<HTMLElement>, {
-        direction: "horizontal",
-    });
+    const scrollContRef = useRef<HTMLElement>(null);
+    
     const { analyzedPkgs, removePkg } = useAnalyzedPackages();
 
     const [activeTab, setActiveTab] = useState<string | null>(null);
-    
-
-    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        if (!tabsListRef.current) return;
-        e.preventDefault();
-        tabsListRef.current.scrollLeft += e.deltaY;
-    };
 
 
     const handleTabClick = (pkgFilename: string) => {
@@ -41,6 +33,18 @@ function PackageAnalysesContainer() {
     };
 
 
+    useEffect(() => {
+        const element = scrollContRef.current;
+        const onWheel = (e: WheelEvent) => {
+            e.preventDefault();
+            if (element)
+                element.scrollLeft += e.deltaY;
+        };
+        element?.addEventListener('wheel', onWheel);
+        return () => element?.removeEventListener('wheel', onWheel);
+    }, [scrollContRef.current]);
+
+
     if (!analyzedPkgs.length) return;
 
 
@@ -49,42 +53,48 @@ function PackageAnalysesContainer() {
             value={activeTab ?? analyzedPkgs[0].filename}
             className='flex gap-2 h-full'
         >
-            <TabsList
-                className='w-auto overflow-x-scroll justify-baseline scrollbar-none'
-                ref={tabsListRef}
-                onMouseDown={onMouseDown}
-                onWheel={handleWheel}
+            <ScrollContainer
+                className="scroll-container scroll-smooth"
+                innerRef={scrollContRef}
             >
-                {analyzedPkgs.map(p => (
-                    <TabsTrigger
-                        key={p.filename}
-                        value={p.filename}
-                        className='cursor-pointer'
-                        onClick={() => handleTabClick(p.filename)}
-                        onMouseUp={e => {
-                            if (e.button === 1)
-                                handleTabClose(p.filename);
-                        }}
-                    >
-                        <p>{p.filename}</p>
-                        <Button
-                            variant='ghost'
-                            className='p-0 w-1 h-auto opacity-50 cursor-pointer'
-                            onClick={e => {
-                                e.stopPropagation();
-                                handleTabClose(p.filename);
-                            }}
-                            // button cannot be a descendent of button
-                            // and TabsTrigger is one.
-                            asChild
-                        >
-                            <div>
-                                <XIcon />
-                            </div>
-                        </Button>
-                    </TabsTrigger>
-                ))}
-            </TabsList>
+                <TabsList
+                    className='w-auto overflow-x-scroll justify-baseline scrollbar-none'
+                >
+                        {analyzedPkgs.map(p => (
+                            <TabsTrigger
+                                key={p.filename}
+                                value={p.filename}
+                                onClick={() => handleTabClick(p.filename)}
+                                onMouseUp={e => {
+                                    if (e.button === 1)
+                                        handleTabClose(p.filename);
+                                }}
+                                //className='grow-0 w-30 cursor-pointer'
+                            >
+                                <p
+                                    //className='overflow-auto text-ellipsis scrollbar-none'
+                                >
+                                    {p.filename}
+                                </p>
+                                <Button
+                                    variant='ghost'
+                                    className='p-0 w-1 h-auto opacity-50 cursor-pointer'
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        handleTabClose(p.filename);
+                                    }}
+                                    // button cannot be a descendent of button
+                                    // and TabsTrigger is one.
+                                    asChild
+                                >
+                                    <div>
+                                        <XIcon />
+                                    </div>
+                                </Button>
+                            </TabsTrigger>
+                        ))}
+                </TabsList>
+            </ScrollContainer>
 
             {analyzedPkgs.map(p => (
                 <TabsContent key={p.filename} value={p.filename} className='h-[80%]'>
