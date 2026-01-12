@@ -156,6 +156,12 @@
   --color-neutral-foreground: oklch(58.971% 0.00007 271.152);
   --color-suspicious: oklch(68.998% 0.13879 58.064);
   --color-dangerous: oklch(64.182% 0.21075 25.393);
+
+  --color-file: oklch(29.307% 0.02074 211.393);
+  --color-file-foreground: oklch(100% 0.00011 271.152);
+
+  --color-dload: oklch(43.129% 0.01831 212.23);
+  --color-dload-accent: oklch(47.047% 0.02514 211.273);
 }
 
 @layer base {

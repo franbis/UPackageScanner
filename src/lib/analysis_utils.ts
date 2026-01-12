@@ -120,8 +120,25 @@ function getPresenceEntries(data: Partial<PackageAnalysis>): Record<string, bool
 }
 
 
+function getStrArrays(data: Partial<PackageAnalysis>): Record<string, string[]> {
+    const entries: [string, string[]][] = [];
+
+    for (const [k, v] of Object.entries(data))
+        if (Array.isArray(v) && v.length && (typeof v[0] === 'string')) {
+            entries.push([k, v as string[]]);
+        } else if (v && typeof v === 'object') {
+            for (const [subK, subV] of Object.entries(v))
+                if (Array.isArray(subV) && subV.length && (typeof subV[0] === 'string'))
+                    entries.push([subK, subV as string[]]);
+        }
+
+    return Object.fromEntries(entries);
+}
+
+
 
 export {
     analyzePkg,
     getPresenceEntries,
+    getStrArrays,
 }
