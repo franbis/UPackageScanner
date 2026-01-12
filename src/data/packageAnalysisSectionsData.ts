@@ -2,11 +2,11 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
     {
         name: 'file_embedding',
         title: 'File Embedding',
-        description: 'Along with media like textures and models, packages can actually embed any kind of file (DLLs, executables, etc) through an exploit. These can then be extracted and executed anywhere on both the server and client machines through UnrealScript.',
+        description: 'Along with media, packages can embed any kind of file (DLLs, executables, etc) through an exploit. These often come in separate packages of which sole purpose is to embed files, another package is often used to extract and execute.',
         contentSeverity: 'dangerous',
         analysisKeys: [
             'embeddedFiles',
-            'extractsEmbeddedFiles'
+            'extractsEmbeddedFiles',
         ]
     },
     {
@@ -15,7 +15,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "UnrealScript can read files from anywhere on both the server and client machines, this isn't limited to 'INI' and localization files.",
         contentSeverity: 'dangerous',
         analysisKeys: [
-            'fileReadingClues'
+            'fileReadingClues',
         ]
     },
     {
@@ -24,7 +24,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "UnrealScript can write files anywhere on both the server and client machines. Since deletion involves writing, this means UnrealScript can also delete files and directories (e.g. 'System32' on Windows).",
         contentSeverity: 'dangerous',
         analysisKeys: [
-            'fileWritingClues'
+            'fileWritingClues',
         ]
     },
     {
@@ -33,7 +33,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "UnrealScript can run any kind of file from anywhere on both the server and client machines. A malicious package could execute a software with specific parameters to take full control of the machine.",
         contentSeverity: 'dangerous',
         analysisKeys: [
-            'fileExecutingClues'
+            'fileExecutingClues',
         ]
     },
     {
@@ -44,7 +44,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         analysisKeys: [
             'accessesConsole',
             'consoleReadingClues',
-            'takesScreenshots'
+            'takesScreenshots',
         ]
     },
     {
@@ -54,7 +54,8 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         contentSeverity: 'dangerous',
         analysisKeys: [
             'readsComputerName',
-            'readsFromClipboard'
+            'readsFromClipboard',
+            'fileReadingClues',
         ]
     },
     {
@@ -66,7 +67,6 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
             'accessesEntryLevel',
             'accessesRootWindow',
             'accessesMenuWindow',
-
         ]
     },
     {
@@ -75,7 +75,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "Any package can send commands on the behalf of both the server and client machine.",
         contentSeverity: 'suspicious',
         analysisKeys: [
-            'consoleCommands'
+            'consoleCommands',
         ]
     },
     {
@@ -84,7 +84,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "UnrealScript can open a dialog window in foreground, this is more of an inconvenience than a dangerous exploit.",
         contentSeverity: 'suspicious',
         analysisKeys: [
-            'opensOSWindow'
+            'opensOSWindow',
         ]
     },
     {
@@ -93,7 +93,7 @@ const pkgAsysSectionsData: PackageAnalysisSection[] = [
         description: "The engine provides developers with functions to easily open a webpage. A malicious package could open webpages non-stop, or send information along with the URL.",
         contentSeverity: 'neutral',
         analysisKeys: [
-            'urls'
+            'urls',
         ]
     },
 ]
