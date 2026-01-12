@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
+import { CountBadge, DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
 import pkgAsysSectionsData from "@/data/packageAnalysisSectionsData";
 import { Separator } from "./ui/separator";
 import { Checkbox } from "./ui/checkbox";
-import { getPresenceEntries, getStrArrays } from "@/lib/analysis_utils";
+import { getContentCounts, getPresenceEntries, getStrArrays } from "@/lib/analysis_utils";
 import { Button } from "./ui/button";
 import { Copy, Download } from "lucide-react";
 import { toast } from "react-toastify";
@@ -17,7 +17,13 @@ interface PackageAnalysisCardProps {
 }
 /** A dashboard to display a package's analysis results */
 function PackageAnalysisCard({ analyzedPkg }: PackageAnalysisCardProps) {
-    const expandedSections = pkgAsysSectionsData.map(e => e.name);
+    const expandedSections = pkgAsysSectionsData.filter(s => {
+        const obj = Object.fromEntries(
+            s.analysisKeys.map(k => [k, analyzedPkg.analysis[k]])
+        );
+        const { contentCount } = getContentCounts(obj);
+        return contentCount;
+    }).map(s => s.name);
 
 
     const copyGUID = () => {
@@ -75,7 +81,7 @@ interface PackageAnalysisItemProps extends Omit<PackageAnalysisSection, 'analysi
 }
 /** A dashboard's item to display part of a package's analysis results */
 function PackageAnalysisCardItem({ name, title, description, contentSeverity, analysisData }: PackageAnalysisItemProps) {
-    const getBadge = () => {
+    const getContentSeverityBadge = () => {
         if (contentSeverity === 'neutral') return <NeutralBadge />;
         if (contentSeverity === 'suspicious') return <SuspiciousBadge />;
         if (contentSeverity === 'dangerous') return <DangerousBadge />;
@@ -85,21 +91,31 @@ function PackageAnalysisCardItem({ name, title, description, contentSeverity, an
     const presenceObj = getPresenceEntries(analysisData);
     const strArrs = getStrArrays(analysisData);
 
+    const {
+        strCluesCount,
+        embeddedFilesCount,
+        contentCount
+    } = getContentCounts(analysisData);
+
 
     return (
         <AccordionItem value={name}>
-            <AccordionTrigger className='flex-row-reverse justify-end hover:no-underline cursor-pointer'>{getBadge()} {title}</AccordionTrigger>
+            <AccordionTrigger className='flex-row-reverse justify-end hover:no-underline cursor-pointer'>
+                <CountBadge count={contentCount} />
+                {getContentSeverityBadge()}
+                {title}
+            </AccordionTrigger>
             <AccordionContent className='flex flex-col gap-3 pl-10 pb-10'>
                 <p className='text-sm text-muted-foreground'>{description}</p>
-                {Boolean(analysisData.embeddedFiles?.length) && <>
+                {Boolean(embeddedFilesCount) && <>
                     <Separator className='opacity-50' />
                     <ClueFileList entries={analysisData.embeddedFiles as EmbeddedFile[]} />
                 </>}
-                {Boolean(Object.entries(presenceObj).length) && <>
+                {Boolean(Object.keys(presenceObj).length) && <>
                     <Separator className='opacity-50' />
                     <CluePresenceList entries={presenceObj} />
                 </>}
-                {Boolean(Object.entries(strArrs).length) && <>
+                {Boolean(strCluesCount) && <>
                     <Separator className='opacity-50' />
                     <ClueStrList entries={strArrs} />
                 </>}

@@ -136,9 +136,27 @@ function getStrArrays(data: Partial<PackageAnalysis>): Record<string, string[]> 
 }
 
 
+function getContentCounts(data: Partial<PackageAnalysis>) {
+const presenceObj = getPresenceEntries(data);
+    const strArrs = getStrArrays(data);
+
+    const presentCluesCount = Object.values(presenceObj).filter(p => p).length;
+    const strCluesCount = Object.keys(strArrs).length;
+    const embeddedFilesCount = data.embeddedFiles?.length ?? 0;
+    
+    return {
+        presentCluesCount,
+        strCluesCount,
+        embeddedFilesCount,
+        contentCount: presentCluesCount + strCluesCount + embeddedFilesCount
+    }
+}
+
+
 
 export {
     analyzePkg,
     getPresenceEntries,
     getStrArrays,
+    getContentCounts,
 }

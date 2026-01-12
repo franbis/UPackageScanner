@@ -22,9 +22,11 @@ function Badge({
         className={cn(badgeVariants({ variant }), className)}
         {...props}
       >
-        <span
-          className="size-1 rounded-full bg-(--dot) shadow-[0_0_4px_var(--dot)]"
-        />
+        {variant !== 'count' &&
+          <span
+            className="size-1 rounded-full bg-(--dot) shadow-[0_0_4px_var(--dot)]"
+          />
+        }
 
         {props.children}
       </Comp>

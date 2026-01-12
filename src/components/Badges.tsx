@@ -8,6 +8,18 @@ import { Badge } from "@/components/ui/badge";
 
 
 
+// General badges.
+
+interface CountBadgeProps extends ComponentProps<typeof Badge> {
+    count: number
+}
+function CountBadge({ count, ...props }: CountBadgeProps ) {
+    const countStr = (count > 99) ? '99+' : String(count);
+
+    return <Badge variant='count' {...props}>{ countStr }</Badge>
+}
+
+
 // App badges.
 
 function OfflineAppBadge(props: ComponentProps<typeof Badge>) {
@@ -30,6 +42,7 @@ function DangerousBadge(props: ComponentProps<typeof Badge>) {
 
 
 export {
+    CountBadge,
     OfflineAppBadge,
     NeutralBadge,
     SuspiciousBadge,
