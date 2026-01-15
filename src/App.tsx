@@ -9,7 +9,7 @@ import { OfflineAppBadge } from '@/components/Badges';
 import Header from '@/components/Header';
 import OpenSourceLink from '@/components/OpenSourceLink';
 import PackageDropzone from '@/components/PackageDropzone';
-import PackageAnalysesContainer from '@/components/PackageAnalysesContainer';
+import PackageAnalysisViewSelector from '@/components/PackageAnalysisViewSelector';
 
 
 
@@ -35,7 +35,7 @@ function App() {
 					<Separator orientation='vertical' className='h-[80%]!' />
 
 					<div className='w-[40%] h-[85%]'>
-						<PackageAnalysesContainer />
+						<PackageAnalysisViewSelector />
 					</div>
 				</PackagesContext.Provider>
 			</div>

@@ -2,22 +2,22 @@ import { useState } from "react";
 
 import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 
-import ViewSelector, { type ViewSelectorItemProps } from "./ViewSelector";
-import PackageAnalysisView from "./PackageAnalysisCard";
+import ViewSelector, { type ViewSelectorItem } from "./ViewSelector";
+import PackageAnalysisView from "./PackageAnalysisView";
 import MarkdownFileView from "./MarkdownFileView";
 
 import markdownPaths from '@/data/markdownPaths.json';
 
 
 
-/** Container of package analysis results, each have their own tab */
-function PackageAnalysesContainer() {
+/** Selector of package analysis views */
+function PackageAnalysisViewSelector() {
 	const [overviewOpened, setOverviewOpened] = useState(true);
 
     const { analyzedPkgs, removePkg } = useAnalyzedPackages();
 
 
-    const viewNodes: ViewSelectorItemProps[] = analyzedPkgs.map(p => ({
+    const viewNodes: ViewSelectorItem[] = analyzedPkgs.map(p => ({
         tabName: p.filename,
         onTabClose: () => {removePkg(p.filename)},
         viewNode: <PackageAnalysisView
@@ -42,4 +42,4 @@ function PackageAnalysesContainer() {
 
 
 
-export default PackageAnalysesContainer;
+export default PackageAnalysisViewSelector;

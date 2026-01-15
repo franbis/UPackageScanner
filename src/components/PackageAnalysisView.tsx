@@ -12,12 +12,12 @@ import BaseView from "./BaseView";
 
 
 
-interface PackageAnalysisCardProps {
+interface PackageAnalysisViewProps {
     /** Analyzed package's data */
     analyzedPkg: AnalyzedPackage
 }
-/** A dashboard to display a package's analysis results */
-function PackageAnalysisCard({ analyzedPkg }: PackageAnalysisCardProps) {
+/** A view to render a package's analysis results */
+function PackageAnalysisView({ analyzedPkg }: PackageAnalysisViewProps) {
     const expandedSections = pkgAsysSectionsData.filter(s => {
         const obj = Object.fromEntries(
             s.analysisKeys.map(k => [k, analyzedPkg.analysis[k]])
@@ -261,4 +261,4 @@ function ClueFileListItem({ embFile }: ClueFileListItemProps) {
 
 
 
-export default PackageAnalysisCard;
+export default PackageAnalysisView;

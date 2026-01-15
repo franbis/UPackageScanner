@@ -9,7 +9,7 @@ import { XIcon } from "lucide-react";
 
 
 
-interface ViewSelectorItemProps {
+interface ViewSelectorItem {
     tabName: string
     onTabClose: () => void
     viewNode: ReactNode
@@ -17,7 +17,7 @@ interface ViewSelectorItemProps {
 
 
 interface ViewSelectorProps {
-    itemsData: ViewSelectorItemProps[]
+    itemsData: ViewSelectorItem[]
 }
 /** Container of views that render when their tab is active */
 function ViewSelector({ itemsData }: ViewSelectorProps) {
@@ -115,6 +115,6 @@ function ViewSelector({ itemsData }: ViewSelectorProps) {
 
 
 export {
-    type ViewSelectorItemProps
+    type ViewSelectorItem
 }
 export default ViewSelector;
