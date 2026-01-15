@@ -1,11 +1,15 @@
+import { useDropzone } from "react-dropzone";
+
+import { toast } from "react-toastify";
+
 // @ts-expect-error Third party JS library
 import UTReader from '@/lib/third_party/UTPackage.js/UTReader';
 
-import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 import { parsePkg } from "@/lib/package_utils";
+
+import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
+
 import { ScanLine } from "lucide-react";
-import { useDropzone } from "react-dropzone";
-import { toast } from "react-toastify";
 
 
 

@@ -1,14 +1,19 @@
+import { getContentCounts, getPresenceEntries, getStrArrays } from "@/lib/analysis_utils";
+
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CountBadge, DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
-import pkgAsysSectionsData from "@/data/packageAnalysisSectionsData";
-import { Separator } from "./ui/separator";
-import { Checkbox } from "./ui/checkbox";
-import { getContentCounts, getPresenceEntries, getStrArrays } from "@/lib/analysis_utils";
-import { Button } from "./ui/button";
-import { Copy, Download } from "lucide-react";
+
+import BaseView from "@/components/BaseView";
+
 import { toast } from "react-toastify";
-import BaseView from "./BaseView";
+
+import pkgAsysSectionsData from "@/data/packageAnalysisSectionsData";
+
+import { Copy, Download } from "lucide-react";
 
 
 

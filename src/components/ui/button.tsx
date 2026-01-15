@@ -4,7 +4,7 @@ import type { VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-import { buttonVariants } from "./styles/button.styles"
+import { buttonVariants } from "@/components/ui/styles/button.styles"
 
 function Button({
   className,

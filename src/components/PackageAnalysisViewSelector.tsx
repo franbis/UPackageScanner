@@ -2,9 +2,10 @@ import { useState } from "react";
 
 import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 
-import ViewSelector, { type ViewSelectorItem } from "./ViewSelector";
-import PackageAnalysisView from "./PackageAnalysisView";
-import MarkdownFileView from "./MarkdownFileView";
+import type { ViewSelectorItem } from '@/components/ViewSelector';
+import ViewSelector from "@/components/ViewSelector";
+import PackageAnalysisView from "@/components/PackageAnalysisView";
+import MarkdownFileView from "@/components/MarkdownFileView";
 
 import markdownPaths from '@/data/markdownPaths.json';
 

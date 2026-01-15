@@ -4,7 +4,7 @@ import type { VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-import { cardVariants } from "./styles/card.styles"
+import { cardVariants } from "@/components/ui/styles/card.styles"
 
 function Card({
   className,

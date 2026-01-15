@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "./ui/button";
+import type { ReactNode } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 import ScrollContainer from 'react-indiana-drag-scroll';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 import { XIcon } from "lucide-react";
 
