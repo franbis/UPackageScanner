@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CountBadge, DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
 import pkgAsysSectionsData from "@/data/packageAnalysisSectionsData";
@@ -8,6 +8,7 @@ import { getContentCounts, getPresenceEntries, getStrArrays } from "@/lib/analys
 import { Button } from "./ui/button";
 import { Copy, Download } from "lucide-react";
 import { toast } from "react-toastify";
+import BaseView from "./BaseView";
 
 
 
@@ -33,8 +34,8 @@ function PackageAnalysisCard({ analyzedPkg }: PackageAnalysisCardProps) {
     
 
     return (
-        <Card className='h-full'>
-            <CardHeader>
+        <BaseView
+            header={(
                 <p className='flex items-center gap-2 text-sm'>
                     <p>GUID</p>
                     <Card className='flex flex-row items-center p-2 gap-3 text-muted-foreground'>
@@ -50,8 +51,8 @@ function PackageAnalysisCard({ analyzedPkg }: PackageAnalysisCardProps) {
                         }
                     </Card>
                 </p>
-            </CardHeader>
-            <CardContent className='overflow-y-scroll scrollbar-thin'>
+            )}
+            content={(
                 <Accordion
                     type="multiple"
                     defaultValue={expandedSections}
@@ -69,8 +70,8 @@ function PackageAnalysisCard({ analyzedPkg }: PackageAnalysisCardProps) {
                         )
                     })}
                 </Accordion>
-            </CardContent>
-        </Card>
+            )}
+        />
     );
 }
 
@@ -261,6 +262,3 @@ function ClueFileListItem({ embFile }: ClueFileListItemProps) {
 
 
 export default PackageAnalysisCard;
-export {
-    type PackageAnalysisItemProps
-}
