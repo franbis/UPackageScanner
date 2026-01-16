@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { basename } from "@/lib/path_utils";
+
 import { useAnalyzedPackages } from "@/hooks/useAnalyzedPackages";
 
 import type { ViewSelectorItem } from '@/components/ViewSelector';
@@ -13,7 +15,9 @@ import markdownPaths from '@/data/markdownPaths.json';
 
 /** Selector of package analysis views */
 function PackageAnalysisViewSelector() {
-	const [overviewOpened, setOverviewOpened] = useState(true);
+    // Used to show the overview view as default one when none is
+    // present.
+	const [overviewTabActive, setOverviewTabActive] = useState(true);
 
     const { analyzedPkgs, removePkg } = useAnalyzedPackages();
 
@@ -25,10 +29,12 @@ function PackageAnalysisViewSelector() {
             analyzedPkg={p}
         />
     }));
-    if (overviewOpened) {
+    if (overviewTabActive) {
+        // Prepend the overview view.
         viewNodes.unshift({
-            tabName: markdownPaths.overview.split('/').pop() as string,
-            onTabClose: () => setOverviewOpened(false),
+            // Get the filename
+            tabName: basename(markdownPaths.overview) as string,
+            onTabClose: () => setOverviewTabActive(false),
             viewNode: <MarkdownFileView uri={markdownPaths.overview} />
         });
     }
@@ -37,6 +43,7 @@ function PackageAnalysisViewSelector() {
     return (
         <ViewSelector
             itemsData={viewNodes}
+            emptyText='No package analysis to show'
         />
     )
 }

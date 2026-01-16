@@ -12,12 +12,10 @@ interface BaseViewProps {
 /** A card to render any type of ReactElement as its content */
 function BaseView({ header, content, footer }: BaseViewProps) {
     return (
-        <Card className='h-full'>
-            {header && <CardHeader>{header}</CardHeader>}
-            <CardContent className='overflow-y-scroll scrollbar-thin'>
-                {content}
-            </CardContent>
-            {footer && <CardFooter>{footer}</CardFooter>}
+        <Card className='flex flex-col w-full h-full'>
+            {header && <CardHeader className='grow'>{header}</CardHeader>}
+            <CardContent className='grow overflow-y-scroll scrollbar-thin'>{content}</CardContent>
+            {footer && <CardFooter className='grow'>{footer}</CardFooter>}
         </Card>
     );
 }
