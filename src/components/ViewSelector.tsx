@@ -61,7 +61,9 @@ function ViewSelector({
             if (scrollContRef.current) {
                 const id = buildTabId(name);
                 const tab = scrollContRef.current.querySelector(`[tab-id="${id}"]`);
-                tab?.scrollIntoView();
+                tab?.scrollIntoView({
+                    behavior: 'smooth'
+                });
             }
     };
 

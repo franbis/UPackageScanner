@@ -19,22 +19,25 @@ function App() {
 	
 
 	return (<>
-		<main className='dark bg-background text-foreground w-screen h-screen font-[Arial]'>
-			<OfflineAppBadge className='fixed top-4 left-4' />
-			<OpenSourceLink />
+		<main className='flex flex-col md:block dark bg-background text-foreground w-full h-full font-[Arial]'>
+			<div className='flex w-full px-4 pt-4 md:fixed'>
+				<OfflineAppBadge />
+				<div className='grow'></div>
+				<OpenSourceLink />
+			</div>
 
-			<div className='flex flex-row w-full h-full justify-evenly items-center'>
+			<div className='flex flex-col md:flex-row w-full h-full items-center gap-7 md:gap-0 md:justify-evenly'>
 				<PackagesContext.Provider value={{
 					analyzedPkgs, setAnalyzedPkgs
 				}}>
-					<div className='w-[40%] flex flex-col gap-10 justify-center items-center'>
+					<div className='flex flex-col gap-10 px-2 md:px-0 my-[20%] md:my-0 justify-center items-center'>
 						<Header />
 						<PackageDropzone />
 					</div>
 
-					<Separator orientation='vertical' className='h-[80%]!' />
+					<Separator orientation='vertical' className='h-[80%]! hidden md:block' />
 
-					<div className='w-[40%] h-[85%]'>
+					 <div className='p-2 md:p-0 w-screen h-screen md:w-[40%] md:h-[85%]'>
 						<PackageAnalysisViewSelector />
 					</div>
 				</PackagesContext.Provider>

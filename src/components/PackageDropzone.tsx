@@ -35,7 +35,7 @@ function PackageDropzone() {
     return (
         <div
             {...getRootProps()}
-            className="border-3 border-dashed border-muted-foreground rounded-lg px-30 py-20 text-center cursor-pointer flex flex-col items-center gap-2 hover:bg-muted hover:border-accent-foreground hover:scale-105 transition-all duration-500"
+            className="border-3 border-dashed border-muted-foreground rounded-lg px-10 py-10 md:px-30 md:py-20 text-center cursor-pointer flex flex-col items-center gap-2 hover:bg-muted hover:border-accent-foreground hover:scale-105 transition-all duration-500"
         >
             <input {...getInputProps()} />
             <ScanLine className='w-10 h-10 text-muted-foreground' />

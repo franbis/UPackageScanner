@@ -1,13 +1,14 @@
 import GitHubIcon from '@/assets/img/icons/brands/github-mark.svg?react';
+import type { ComponentProps } from 'react';
 
 
 
 /** A link to visit the open-source codebase for the project */
-function OpenSourceLink() {
+function OpenSourceLink(props: ComponentProps<'a'>) {
     return (
-        <a href={__OPEN_SOURCE_URL__} target='_blank'>
+        <a href={__OPEN_SOURCE_URL__} target='_blank' {...props}>
             <GitHubIcon
-                className="fixed top-4 right-4 text-xl w-[1em] h-[1em] [&_path]:fill-muted-foreground hover:[&_path]:fill-accent-foreground [&_path]:transition-colors [&_path]:duration-300"
+                className="text-xl w-[1em] h-[1em] [&_path]:fill-muted-foreground hover:[&_path]:fill-accent-foreground [&_path]:transition-colors [&_path]:duration-300"
                 // Match width/height defined in the svg file.
                 viewBox="0 0 98 96"
             />

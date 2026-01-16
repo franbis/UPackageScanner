@@ -40,41 +40,42 @@ function PackageAnalysisView({ analyzedPkg }: PackageAnalysisViewProps) {
 
     return (
         <BaseView
-            header={(
-                <p className='flex items-center gap-2 text-sm'>
-                    <p>GUID</p>
-                    <Card className='flex flex-row items-center p-2 gap-3 text-muted-foreground'>
-                        {analyzedPkg.guid ?? 'Not available'}
-                        {analyzedPkg.guid &&
-                            <Button
-                                variant='ghost'
-                                className="p-0 w-5 h-auto cursor-pointer opacity-50"
-                                onClick={copyGUID}
-                            >
-                                <Copy className='transform scale-x-[-1] rotate-180' />
-                            </Button>
-                        }
-                    </Card>
-                </p>
-            )}
             content={(
-                <Accordion
-                    type="multiple"
-                    defaultValue={expandedSections}
-                >
-                    {pkgAsysSectionsData.map(s => {
-                        const { analysisKeys, ...dRest } = s;
-                        const d = Object.fromEntries(
-                            s.analysisKeys.map(k => [k, analyzedPkg.analysis[k]])
-                        );
-                        return (
-                            <PackageAnalysisCardItem
-                                {...dRest}
-                                analysisData={d}
-                            />
-                        )
-                    })}
-                </Accordion>
+                <div className='flex flex-col gap-8'>
+                    <div className='flex items-center gap-2 text-sm'>
+                        <p>GUID</p>
+                        <Card className='flex flex-row items-center p-2 gap-3 text-muted-foreground'>
+                            <p className='wrap-anywhere'>{analyzedPkg.guid ?? 'Not available'}</p>
+                            {analyzedPkg.guid &&
+                                <Button
+                                    variant='ghost'
+                                    className="p-0 w-5 h-auto cursor-pointer opacity-50"
+                                    onClick={copyGUID}
+                                >
+                                    <Copy className='transform scale-x-[-1] rotate-180' />
+                                </Button>
+                            }
+                        </Card>
+                    </div>
+
+                    <Accordion
+                        type="multiple"
+                        defaultValue={expandedSections}
+                    >
+                        {pkgAsysSectionsData.map(s => {
+                            const { analysisKeys, ...dRest } = s;
+                            const d = Object.fromEntries(
+                                s.analysisKeys.map(k => [k, analyzedPkg.analysis[k]])
+                            );
+                            return (
+                                <PackageAnalysisCardItem
+                                    {...dRest}
+                                    analysisData={d}
+                                />
+                            )
+                        })}
+                    </Accordion>
+                </div>
             )}
         />
     );
@@ -88,9 +89,9 @@ interface PackageAnalysisItemProps extends Omit<PackageAnalysisSection, 'analysi
 /** A dashboard's item to display part of a package's analysis results */
 function PackageAnalysisCardItem({ name, title, description, contentSeverity, analysisData }: PackageAnalysisItemProps) {
     const getContentSeverityBadge = () => {
-        if (contentSeverity === 'neutral') return <NeutralBadge />;
-        if (contentSeverity === 'suspicious') return <SuspiciousBadge />;
-        if (contentSeverity === 'dangerous') return <DangerousBadge />;
+        if (contentSeverity === 'neutral') return <NeutralBadge className='hidden md:inline-flex' />;
+        if (contentSeverity === 'suspicious') return <SuspiciousBadge className='hidden md:inline-flex' />;
+        if (contentSeverity === 'dangerous') return <DangerousBadge className='hidden md:inline-flex' />;
     };
 
 
