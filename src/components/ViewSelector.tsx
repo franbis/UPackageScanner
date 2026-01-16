@@ -101,21 +101,30 @@ function ViewSelector({
         
         let timeout: number | undefined;
 
-        const newItemsLen = Math.max(0, itemsData.length - prevItemsDataLenRef.current);
+        const itemsDiff = itemsData.length - prevItemsDataLenRef.current;
 
-        if (itemsData.length && !newItemsLen)
+        if (itemsData.length && (itemsDiff === 0)) {
             // No new items added, only default ones are present
             setBestTab(0);
-        else if (newItemsLen === 1)
+        }
+        else if (itemsDiff < 0) {
+            // An item has been deleted, trigger the first tab
+            // if it was linked to the active tab
+            if (!activeTab)
+                setBestTab(0);
+        }
+        else if (itemsDiff === 1) {
             // Single item added, trigger its tab immediately
             setBestTab(-1);
-        else if (newItemsLen > 1)
+        }
+        else if (itemsDiff > 1) {
             // Multiple items added, don't trigger each tab individually.
             // Instead, wait some time for all the views to be ready and
             // trigger the last tab
             timeout = setTimeout(() => {
                 setBestTab(-1);
             }, 300);
+        }
 
 
         return () => clearTimeout(timeout);
