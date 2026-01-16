@@ -42,7 +42,7 @@ function PackageAnalysisViewSelector() {
 
     return (
         <ViewSelector
-            itemsData={viewNodes}
+            items={viewNodes}
             emptyText='No package analysis to show'
         />
     )

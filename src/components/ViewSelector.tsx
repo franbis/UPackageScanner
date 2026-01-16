@@ -19,11 +19,19 @@ interface ViewSelectorItem {
 
 
 interface ViewSelectorProps {
-    itemsData: ViewSelectorItem[]
+    items: ViewSelectorItem[]
+    /** Text to render when `items` is empty */
     emptyText?: string
+    /** Maximum length for names rendered on tabs */
+    maxTabDisplayNameLen?: number
 }
 /** Container of views that render when their tab is active */
-function ViewSelector({ itemsData = [], emptyText = 'No tabs present' }: ViewSelectorProps) {
+function ViewSelector({
+    items: itemsData = [],
+    emptyText = 'No tabs present',
+    maxTabDisplayNameLen = 20
+}: ViewSelectorProps) {
+
     const scrollContRef = useRef<HTMLElement>(null);
     const prevItemsDataLenRef = useRef(itemsData.length);
 
@@ -33,6 +41,16 @@ function ViewSelector({ itemsData = [], emptyText = 'No tabs present' }: ViewSel
     /** Construct a tab ID string */
     const buildTabId = (name: string) => {
         return `tabs-trigger-${name}`;
+    };
+
+
+    /** Return a truncated version of a string if it exceeds
+     * `maxTabDisplayNameLen` */
+    const buildTabDisplayName = (name: string) => {
+        if (name.length <= maxTabDisplayNameLen) return name;
+
+        const half = Math.floor(maxTabDisplayNameLen / 2);
+        return name.slice(0, half) + '...' + name.slice(-half);
     };
 
 
@@ -141,7 +159,7 @@ function ViewSelector({ itemsData = [], emptyText = 'No tabs present' }: ViewSel
                                         handleTabClose(vData.tabName);
                                 }}
                             >
-                                <p>{vData.tabName}</p>
+                                <p>{buildTabDisplayName(vData.tabName)}</p>
                                 <Button
                                     variant='ghost'
                                     className='p-0 w-1 h-auto opacity-50 cursor-pointer'
