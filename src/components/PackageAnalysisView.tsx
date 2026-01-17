@@ -158,7 +158,7 @@ function CluePresenceListItem({ name, present }: CluePresenceListItemProps) {
         <li className='list-item'>
             <div className="flex items-center gap-3">
                 <Checkbox checked={present} />
-                <p>{name}</p>
+                <p className='wrap-anywhere'>{name}</p>
             </div>
         </li>
     );
@@ -198,7 +198,7 @@ function ClueStrListItem({ s }: ClueStrListItemProps) {
 
     return (
         <li className='flex w-fit px-2 py-1 gap-1 italic rounded bg-gray-800'>
-            <p className='italic'>{s}</p>
+            <p className='italic wrap-anywhere'>{s}</p>
             <Button
                 onClick={copyStr}
                 variant='ghost'
@@ -218,7 +218,7 @@ function ClueFileList({ entries }: ClueFileListProps) {
     return (
         <div className='flex flex-col gap-2.5'>
             <h1 className='text-xl'>Embedded Files</h1>
-            <ul className='list-none pl-5 flex flex-wrap gap-2.5'>
+            <ul className='list-none pl-5 flex flex-wrap gap-2.5 wrap-anywhere'>
                 {entries.map((f, idx) => (
                     <ClueFileListItem key={idx} embFile={f} />
                 ))}
