@@ -1,21 +1,33 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { ToastContainer, Zoom } from 'react-toastify';
 
 import { PackagesContext } from '@/contexts';
 
 import { Separator } from '@/components/ui/separator';
+import { Button } from './components/ui/button';
 import { OfflineAppBadge } from '@/components/Badges';
 import Header from '@/components/Header';
 import OpenSourceLink from '@/components/OpenSourceLink';
 import PackageDropzone from '@/components/PackageDropzone';
 import PackageAnalysisViewSelector from '@/components/PackageAnalysisViewSelector';
 
+import { ArrowDown } from 'lucide-react';
+
 
 
 /** An app to check Unreal Engine packages for suspicious content */
 function App() {
+	const selectorRef = useRef<HTMLDivElement>(null);
+
 	const [analyzedPkgs, setAnalyzedPkgs] = useState<AnalyzedPackage[]>([]);
+	
+
+	const scrollToSelector = () => {
+		selectorRef.current?.scrollIntoView({
+			behavior: 'smooth'
+		});
+	};
 	
 
 	return (<>
@@ -36,8 +48,16 @@ function App() {
 					</div>
 
 					<Separator orientation='vertical' className='h-[80%]! hidden md:block' />
+					<Button
+						onClick={scrollToSelector}
+						variant='secondary'
+						className='rounded-full w-10 h-10 p-1.5 text-muted-foreground cursor-pointer block md:hidden'
+						asChild
+					>
+						<ArrowDown />
+					</Button>
 
-					 <div className='p-2 md:p-0 w-screen h-screen md:w-[40%] md:h-[85%]'>
+					 <div ref={selectorRef} className='p-2 md:p-0 w-screen h-screen md:w-[40%] md:h-[85%]'>
 						<PackageAnalysisViewSelector />
 					</div>
 				</PackagesContext.Provider>

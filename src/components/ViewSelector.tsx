@@ -58,7 +58,7 @@ function ViewSelector({
     const setActiveTabWrapper = (name: typeof activeTab) => {
         setActiveTab(name);
         if (name)
-            if (scrollContRef.current) {
+            if (scrollContRef.current && (itemsData.length > 1)) {
                 const id = buildTabId(name);
                 const tab = scrollContRef.current.querySelector(`[tab-id="${id}"]`);
                 tab?.scrollIntoView({
