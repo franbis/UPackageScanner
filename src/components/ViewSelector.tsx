@@ -27,13 +27,13 @@ interface ViewSelectorProps {
 }
 /** Container of views that render when their tab is active */
 function ViewSelector({
-    items: itemsData = [],
+    items = [],
     emptyText = 'No tabs present',
     maxTabDisplayNameLen = 20
 }: ViewSelectorProps) {
 
     const scrollContRef = useRef<HTMLElement>(null);
-    const prevItemsDataLenRef = useRef(itemsData.length);
+    const prevItemsDataLenRef = useRef(items.length);
 
     const [activeTab, setActiveTab] = useState<string>();
 
@@ -58,7 +58,7 @@ function ViewSelector({
     const setActiveTabWrapper = (name: typeof activeTab) => {
         setActiveTab(name);
         if (name)
-            if (scrollContRef.current && (itemsData.length > 1)) {
+            if (scrollContRef.current && (items.length > 1)) {
                 const id = buildTabId(name);
                 const tab = scrollContRef.current.querySelector(`[tab-id="${id}"]`);
                 tab?.scrollIntoView({
@@ -74,7 +74,7 @@ function ViewSelector({
 
 
     const handleTabClose = (name: string) => {
-        itemsData.find((d => d.tabName === name))?.onTabClose();
+        items.find((d => d.tabName === name))?.onTabClose();
         if (activeTab === name)
             setActiveTabWrapper(undefined);
     };
@@ -96,16 +96,16 @@ function ViewSelector({
     // Find and trigger the best tab based on new insertions
     useEffect(() => {
         const setBestTab = (tabIdx: number) => {
-            setActiveTabWrapper(itemsData.at(tabIdx)?.tabName);
-            prevItemsDataLenRef.current = itemsData.length;
+            setActiveTabWrapper(items.at(tabIdx)?.tabName);
+            prevItemsDataLenRef.current = items.length;
         };
         
         
         let timeout: number | undefined;
 
-        const itemsDiff = itemsData.length - prevItemsDataLenRef.current;
+        const itemsDiff = items.length - prevItemsDataLenRef.current;
 
-        if (itemsData.length && (itemsDiff === 0)) {
+        if (items.length && (itemsDiff === 0)) {
             // No new items added, only default ones are present
             setBestTab(0);
         }
@@ -130,10 +130,10 @@ function ViewSelector({
 
 
         return () => clearTimeout(timeout);
-    }, [itemsData]);
+    }, [items]);
 
 
-    if (!itemsData.length)
+    if (!items.length)
         // No views to render, render a dummy one instead.
         return (
             <Tabs className='flex gap-2 h-full' value=''>
@@ -159,7 +159,7 @@ function ViewSelector({
         <Tabs value={activeTab} className='flex gap-2 h-full'>
             <ScrollContainer innerRef={scrollContRef} className="scroll-container scroll-smooth">
                 <TabsList className='w-auto overflow-x-scroll justify-baseline scrollbar-none'>
-                        {itemsData.map(vData => (
+                        {items.map(vData => (
                             <TabsTrigger
                                 key={vData.tabName}
                                 tab-id={buildTabId(vData.tabName)}
@@ -191,7 +191,7 @@ function ViewSelector({
                 </TabsList>
             </ScrollContainer>
 
-            {itemsData.map(iData => (
+            {items.map(iData => (
                 <TabsContent key={iData.tabName} value={iData.tabName} className='h-[80%]'>
                     {iData.viewNode}
                 </TabsContent>
