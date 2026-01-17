@@ -104,7 +104,7 @@
 --popover-foreground: oklch(1 0 0);
 --primary: oklch(0.951 0.121 125.737);
 --primary-foreground: oklch(0.2 0.02 212.538);
---secondary: oklch(0.18 0.02 212.538);
+--secondary: oklch(26.289% 0.02651 216.449);
 --secondary-foreground: oklch(1 0 0);
 --muted: oklch(0.2 0.02 212.538);
 --muted-foreground: oklch(0.639 0.024 214.493);
@@ -175,7 +175,7 @@
     @apply bg-background text-foreground;
   }
   html, body, #root {
-    @apply w-auto h-auto md:w-full md:h-full
+    @apply w-auto h-auto lg:w-full lg:h-full
   }
 
   .Toastify__toast {

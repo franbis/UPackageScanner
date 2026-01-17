@@ -31,23 +31,23 @@ function App() {
 	
 
 	return (<>
-		<main className='flex flex-col md:block dark bg-background text-foreground w-full h-full font-[Arial]'>
-			<div className='flex w-full px-4 pt-4 md:fixed'>
+		<main className='flex flex-col lg:block dark bg-background text-foreground w-full h-full font-[Arial]'>
+			<div className='flex w-full px-4 pt-4 lg:fixed'>
 				<OfflineAppBadge />
 				<div className='grow'></div>
 				<OpenSourceLink />
 			</div>
 
-			<div className='flex flex-col md:flex-row w-full h-full items-center gap-7 md:gap-0 md:justify-evenly'>
+			<div className='flex flex-col lg:flex-row w-full h-full items-center gap-7 lg:gap-0 lg:justify-evenly'>
 				<PackagesContext.Provider value={{
 					analyzedPkgs, setAnalyzedPkgs
 				}}>
-					<div className='flex flex-col gap-10 px-2 md:px-0 my-[20%] md:my-0 justify-center items-center'>
+					<div className='flex flex-col gap-10 px-2 lg:px-0 mt-[15%] lg:mt-0 justify-center items-center'>
 						<Header />
 						<PackageDropzone />
 					</div>
 
-					<Separator orientation='vertical' className='h-[80%]! hidden md:block' />
+					<Separator orientation='vertical' className='h-[80%]! hidden lg:block' />
 					<Button
 						onClick={scrollToSelector}
 						variant='secondary'
@@ -57,7 +57,7 @@ function App() {
 						<ArrowDown />
 					</Button>
 
-					 <div ref={selectorRef} className='p-2 md:p-0 w-screen h-screen md:w-[40%] md:h-[85%]'>
+					 <div ref={selectorRef} className='p-2 lg:p-0 w-screen h-screen lg:w-[40%] lg:h-[85%]'>
 						<PackageAnalysisViewSelector />
 					</div>
 				</PackagesContext.Provider>

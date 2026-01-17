@@ -89,9 +89,9 @@ interface PackageAnalysisItemProps extends Omit<PackageAnalysisSection, 'analysi
 /** A dashboard's item to display part of a package's analysis results */
 function PackageAnalysisCardItem({ name, title, description, contentSeverity, analysisData }: PackageAnalysisItemProps) {
     const getContentSeverityBadge = () => {
-        if (contentSeverity === 'neutral') return <NeutralBadge className='hidden md:inline-flex' />;
-        if (contentSeverity === 'suspicious') return <SuspiciousBadge className='hidden md:inline-flex' />;
-        if (contentSeverity === 'dangerous') return <DangerousBadge className='hidden md:inline-flex' />;
+        if (contentSeverity === 'neutral') return <NeutralBadge className='hidden lg:inline-flex' />;
+        if (contentSeverity === 'suspicious') return <SuspiciousBadge className='hidden lg:inline-flex' />;
+        if (contentSeverity === 'dangerous') return <DangerousBadge className='hidden lg:inline-flex' />;
     };
 
 
