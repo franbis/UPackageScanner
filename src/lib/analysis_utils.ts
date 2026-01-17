@@ -3,19 +3,25 @@ import UTReader from '@/lib/third_party/UTPackage.js/UTReader';
 
 import { extractEmbeddedFiles, findBuiltInImport, findName, findStr } from "@/lib/package_utils";
 
+import commonContentData from '@/data/commonPackageContentData.json';
+
 
 
 /** Check a package for suspicious content and return the results */
 async function analyzePkg(pkg: UTReader.reader) {
     const embFiles: EmbeddedFile[] = [];
     for (const d of extractEmbeddedFiles({ pkg })) {
-        embFiles.push({
-            name: d.name,
-            // 'extractEmbeddedFiles' appends the extension
-            ext: d.name.split('.').pop() as string,
-            size: d.size,
-            content: await d.arrayBuffer()
-        })
+        // 'extractEmbeddedFiles' appends the extension
+        const ext = (d.name.split('.').pop() as string).toLowerCase();
+        if (!commonContentData.musicFileExtensions.includes(ext)) {
+            // The file doesn't look like a music file
+            embFiles.push({
+                name: d.name,
+                ext,
+                size: d.size,
+                content: await d.arrayBuffer()
+            });
+        }
     }
 
 
