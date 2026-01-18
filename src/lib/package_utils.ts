@@ -80,7 +80,7 @@ interface FindBuiltInImportArgs {
 /** Return data for an object if a package imports it */
 function findBuiltInImport({ pkg, outer, type, name }: FindBuiltInImportArgs) {
     return pkg.importTable.find((e: UTReader.ImportTableObject) =>
-        (outer ? (caseInsCompare(outer, 'package') ? caseInsCompare(e.packageName, outer) : true) : true)
+        (outer ? (caseInsCompare(e.className, 'package') ? true : caseInsCompare(e.packageName, outer)) : true)
         && (type ? caseInsCompare(e.className, type) : true)
         && caseInsCompare(e.objectName, name)
     );
