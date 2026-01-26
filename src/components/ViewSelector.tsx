@@ -169,6 +169,7 @@ function ViewSelector({
                                     if (e.button === 1)
                                         handleTabClose(vData.tabName);
                                 }}
+                                className='cursor-pointer'
                             >
                                 <p>{buildTabDisplayName(vData.tabName)}</p>
                                 <Button
