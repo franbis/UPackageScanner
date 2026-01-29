@@ -8,12 +8,14 @@ import svgr from 'vite-plugin-svgr';
 
 
 
+const BASE_PATH = process.env.BASE_PATH || '/';
 const STRICT_MODE = process.env.STRICT_MODE === '1';
 const OPEN_SOURCE_URL = process.env.OPEN_SOURCE_URL;
 
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: BASE_PATH,
   plugins: [
     react(),
     tailwindcss(),
