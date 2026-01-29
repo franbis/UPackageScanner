@@ -8,10 +8,8 @@ import svgr from 'vite-plugin-svgr';
 
 
 
-const env = loadEnv("", process.cwd(), "");
-
-const STRICT_MODE = env['STRICT_MODE'] === '1';
-const OPEN_SOURCE_URL = env['OPEN_SOURCE_URL'];
+const STRICT_MODE = process.env.STRICT_MODE === '1';
+const OPEN_SOURCE_URL = process.env.OPEN_SOURCE_URL;
 
 
 // https://vite.dev/config/
