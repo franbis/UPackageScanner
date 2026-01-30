@@ -22,7 +22,7 @@ function MarkdownFileView({ uri }: MarkdownFileViewProps) {
 			.then(resp => resp.text())
 			.then(setContent)
 		;
-	}, []);
+	}, [uri]);
 	
 
 	return <MarkdownView content={content} />;
