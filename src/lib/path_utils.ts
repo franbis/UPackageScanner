@@ -6,7 +6,7 @@ function basename(path: string) {
 
 /** Return the URL string from a URI */
 function buildURL(uri: string) {
-    return new URL(uri, window.location.origin + import.meta.env.BASE_URL).toString();
+    return new URL(uri.replace(/^\/+/, ''), window.location.origin + import.meta.env.BASE_URL).toString();
 }
 
 
