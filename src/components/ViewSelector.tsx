@@ -90,7 +90,7 @@ function ViewSelector({
         };
         element?.addEventListener('wheel', onWheel);
         return () => element?.removeEventListener('wheel', onWheel);
-    }, [scrollContRef.current]);
+    }, [scrollContRef]);
 
 
     // Find and trigger the best tab based on new insertions
