@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { buildURL } from '@/lib/path_utils'
+
 import MarkdownView from "@/components/MarkdownView";
 
 
@@ -18,7 +20,7 @@ function MarkdownFileView({ uri }: MarkdownFileViewProps) {
 
 
 	useEffect(() => {
-		fetch(uri)
+		fetch(buildURL(uri))
 			.then(resp => resp.text())
 			.then(setContent)
 		;
