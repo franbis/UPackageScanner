@@ -45,6 +45,9 @@ jobs:
           BASE_PATH=/${GITHUB_REPOSITORY##*/}/
           OPEN_SOURCE_URL=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
           
+          echo BASE_PATH: $BASE_PATH
+          echo OPEN_SOURCE_URL: $OPEN_SOURCE_URL
+          
           echo "BASE_PATH=$BASE_PATH" >> $GITHUB_ENV
           echo "OPEN_SOURCE_URL=$OPEN_SOURCE_URL" >> $GITHUB_ENV
       
