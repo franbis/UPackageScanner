@@ -116,9 +116,10 @@ function findStr({
     // contain regex special characters.
     s = s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    if (!caseSensitive)
+    if (!caseSensitive) {
         dataStr = dataStr.toLowerCase();
         s = s.toLowerCase();
+    }
 
     const partial = '[^\\x00]*';
     const reStart = fromStart ? '' : partial;
