@@ -130,11 +130,39 @@ function findStr({
 }
 
 
+/**
+ * Return the normalized version of an object's type as is returned
+ * by UTReader
+ */
+function normalizeObjType(type: string) {
+    if (!['package', 'Class', 'Function'].includes(type))
+        type = 'object';
+    
+    return type.toLowerCase() as NormalizedObjectType;
+}
+
+
+/**
+ * Return the normalized version of the type of an object's outer
+ * given the object's type as is returned by UTReader
+ * 
+ * @param mainObjType Type of the object for which outer's type will be returned
+ */
+function getNormalizedOuterType(mainObjType: string) {
+    if (mainObjType === 'Class') mainObjType = 'package';
+    else if (mainObjType !== 'package') mainObjType = 'Class';
+    
+    return normalizeObjType(mainObjType);
+}
+
+
 
 export {
     parsePkg,
     findName,
     findBuiltInImport,
     findStr,
-    extractEmbeddedFiles
+    extractEmbeddedFiles,
+    normalizeObjType,
+    getNormalizedOuterType as normalizeOuterType,
 }

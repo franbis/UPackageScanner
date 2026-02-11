@@ -9,7 +9,7 @@ import { analyzePkg } from "@/lib/analysis_utils";
 
 
 
-/** Return package analyses and a function to analyze one in
+/** Return the array of analyzed packages and a function to analyze one in
  * the context of PackageAnalysesContext */
 function useAnalyzedPackages() {
     const pkgsCtx = useContext(PackagesContext);
