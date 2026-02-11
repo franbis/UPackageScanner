@@ -7,81 +7,49 @@ interface EmbeddedFile {
 }
 
 
-/** Features that, if present in a package, can be seen as
- * evidences of file reading */
-interface FileReadingClues {
-    webResponse: boolean
-    includeBinaryFile: boolean
-    includePath: boolean
-    sendBinary: boolean
+/** Base interface for any clue that could be found only once within a
+ * package */
+interface PresenceClue {
+    /** If `true`, the package contains the evidence */
+    present?: boolean
+}
+
+/** Base interface for any clue that may be found multiple times within
+ * a package */
+interface MatchesClue<T> {
+    /** Array of content that matches the evidence type */
+    matches?: T[]
 }
 
 
-/** Features that, if present in a package, can be seen as
- * evidences of file writing */
-interface FileWritingClues {
-    statLog: boolean
-    statLogFile: boolean
-    saveTimeDemo: boolean
+interface EmbeddedFileMatchesClue extends MatchesClue<EmbeddedFile> {
+    includedExtensions: string[]
+    excludedExtensions: string[]
 }
 
 
-/** Features that, if present in a package, can be seen as
- * evidences of file executing */
-interface FileExecutingClues {
-    localBatcherURL: boolean
-    worldBatcherURL: boolean
-    worldBatcherParams: boolean
-    localLogDir: boolean
-    executeLocalLogBatcher: boolean
-    executeWorldLogBatcher: boolean
-    executeSilentLogBatcher: boolean
-    batchLocal: boolean
-    fileProtocol: boolean
-    // Unused
-    //localBatcherParams
-    //localStatsURL
-    //worldStatsURL
-    //worldLogDir
+interface ObjectPresenceClue extends PresenceClue {
+    name: string
+    type?: string
+    outer?: string
+    package?: string
 }
 
 
-/** Features that, if present in a package, can be seen as
- * evidences of console reading or keylogging */
-interface ConsoleReadingClues {
-    typedStr: boolean
-    history: boolean
-    eInputKey: boolean
-    eInputAction: boolean
-    keyEvent: boolean
+interface StringMatchesClue extends MatchesClue<string> {
+    substring: string
+    part: 'left' | 'right' | 'anywhere' | 'whole'
 }
 
 
-/** Package analysis result about suspicious content */
-interface PackageAnalysis {
-    embeddedFiles: EmbeddedFile[]
-    fileReadingClues: FileReadingClues
-    fileWritingClues: FileWritingClues
-    fileExecutingClues: FileExecutingClues
-    consoleReadingClues: ConsoleReadingClues
-    /** URLs that may be opened without user's consent */
-    urls: string[]
-    readsFromClipboard: boolean
-    takesScreenshots: boolean
-    /** The entry level can be used to run scripts that
-     * persist through server switches */
-    accessesEntryLevel: boolean
-    /** 'UWindowRootWindow' can be used to take full control
-     * of the client game */
-    accessesRootWindow: boolean
-    /** 'UWindowMenuWindow' can be used to run code that persists
-     * through reboots */
-    accessesMenuWindow: boolean
-    accessesConsole: boolean
-    consoleCommands: string[]
-    readsComputerName: boolean
-    opensOSWindow: boolean
-    extractsEmbeddedFiles: boolean
+interface ClueGroup {
+    description?: string
+    
+    embeddedFileMatchesClues?: EmbeddedFileMatchesClue[]
+    objPresenceClues?: ObjectPresenceClue[]
+    strParamMatchesClues?: StringMatchesClue[]
+    ccMatchesClues?: StringMatchesClue[]
+    URLMatchesClues?: StringMatchesClue[]
 }
 
 
@@ -93,7 +61,12 @@ interface PackageAnalysisSection {
         VariantProps<typeof Badge>['variant'],
         'neutral' | 'suspicious' | 'dangerous'
     >
-    analysisKeys: (keyof PackageAnalysis)[]
+    clueGroups: ClueGroup[]
+}
+
+
+interface PackageAnalysis {
+    sections: PackageAnalysisSection[]
 }
 
 

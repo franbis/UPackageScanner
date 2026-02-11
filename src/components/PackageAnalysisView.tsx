@@ -1,79 +1,59 @@
-import { getContentCounts, getPresenceEntries, getStrArrays } from "@/lib/analysis_utils";
+import { getCluesCount } from "@/lib/analysis_utils";
 
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { CountBadge, DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
+import { CountBadge, DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
 import BaseView from "@/components/BaseView";
+
+import clsx from "clsx";
 
 import { toast } from "react-toastify";
 
-import pkgAsysSectionsData from "@/data/packageAnalysisSectionsData";
+import { BoxIcon, Copy, Download, FileBracesCornerIcon, InfoIcon, PackageIcon, SquareFunctionIcon } from "lucide-react";
+import { normalizeObjType, normalizeOuterType } from "@/lib/package_utils";
 
-import { Copy, Download } from "lucide-react";
 
+
+/** Base interface for clue list item components properties */
+interface ClueListItemProps<T> {
+    subject: T
+    helpText?: string
+}
 
 
 interface PackageAnalysisViewProps {
     /** Analyzed package's data */
     analyzedPkg: AnalyzedPackage
 }
-/** A view to render a package's analysis results */
+/**
+ * A view to display a package's analysis results divided by sections
+ * rendered as part of an accordion
+ */
 function PackageAnalysisView({ analyzedPkg }: PackageAnalysisViewProps) {
-    const expandedSections = pkgAsysSectionsData.filter(s => {
-        const obj = Object.fromEntries(
-            s.analysisKeys.map(k => [k, analyzedPkg.analysis[k]])
-        );
-        const { contentCount } = getContentCounts(obj);
+    const expandedSections = analyzedPkg.analysis.sections.filter(s => {
+        const { contentCount } = getCluesCount(s);
         return contentCount;
     }).map(s => s.name);
-
-
-    const copyGUID = () => {
-        navigator.clipboard.writeText(analyzedPkg.guid as string);
-        toast.success("Package's GUID copied!");
-    };
     
 
     return (
         <BaseView
             content={(
                 <div className='flex flex-col gap-8'>
-                    <div className='flex items-center gap-2 text-sm'>
-                        <p>GUID</p>
-                        <Card className='flex flex-row items-center p-2 gap-3 text-muted-foreground'>
-                            <p className='wrap-anywhere'>{analyzedPkg.guid ?? 'Not available'}</p>
-                            {analyzedPkg.guid &&
-                                <Button
-                                    variant='ghost'
-                                    className="p-0 w-5 h-auto cursor-pointer opacity-50"
-                                    onClick={copyGUID}
-                                >
-                                    <Copy className='transform scale-x-[-1] rotate-180' />
-                                </Button>
-                            }
-                        </Card>
-                    </div>
+                    <GUIDDisplay guid={analyzedPkg.guid} />
 
                     <Accordion
                         type="multiple"
                         defaultValue={expandedSections}
                     >
-                        {pkgAsysSectionsData.map(s => {
-                            const { analysisKeys, ...dRest } = s;
-                            const d = Object.fromEntries(
-                                s.analysisKeys.map(k => [k, analyzedPkg.analysis[k]])
-                            );
-                            return (
-                                <PackageAnalysisCardItem
-                                    {...dRest}
-                                    analysisData={d}
-                                />
-                            )
-                        })}
+                        {analyzedPkg.analysis.sections.map(s => (
+                            <PackageAnalysisViewSection key={s.name} section={s} />
+                        ))}
                     </Accordion>
                 </div>
             )}
@@ -82,66 +62,112 @@ function PackageAnalysisView({ analyzedPkg }: PackageAnalysisViewProps) {
 }
 
 
-interface PackageAnalysisItemProps extends Omit<PackageAnalysisSection, 'analysisKeys'> {
-    /** Package's analysis data */
-    analysisData: Partial<PackageAnalysis>
+interface PackageAnalysisViewSectionProps {
+    section: PackageAnalysisSection
 }
-/** A dashboard's item to display part of a package's analysis results */
-function PackageAnalysisCardItem({ name, title, description, contentSeverity, analysisData }: PackageAnalysisItemProps) {
+/** Render a package analysis's section as an accordion item */
+function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps) {
     const getContentSeverityBadge = () => {
-        if (contentSeverity === 'neutral') return <NeutralBadge className='hidden lg:inline-flex' />;
-        if (contentSeverity === 'suspicious') return <SuspiciousBadge className='hidden lg:inline-flex' />;
-        if (contentSeverity === 'dangerous') return <DangerousBadge className='hidden lg:inline-flex' />;
+        if (section.contentSeverity === 'neutral') return <NeutralBadge className='hidden lg:inline-flex' />;
+        if (section.contentSeverity === 'suspicious') return <SuspiciousBadge className='hidden lg:inline-flex' />;
+        if (section.contentSeverity === 'dangerous') return <DangerousBadge className='hidden lg:inline-flex' />;
     };
 
 
-    const presenceObj = getPresenceEntries(analysisData);
-    const strArrs = getStrArrays(analysisData);
+    const { contentCount } = getCluesCount(section);
 
-    const {
-        strCluesCount,
-        embeddedFilesCount,
-        contentCount
-    } = getContentCounts(analysisData);
 
+    /**
+     * Return an array of clue items of which subjects are of type `S`
+     * 
+     * @param getClues Must return the array of clues given a clue group
+     * @param getSubjects Must return the array of clue subjects given a clue of type `C`
+     */
+    function buildClueArr<C extends (PresenceClue | MatchesClue<S>), S>(
+        getClues: (group: ClueGroup) => C[],
+        getSubjects: (clue: C) => S[]
+    ) {
+        const items: ClueListItemProps<S>[] = [];
+
+        for (const group of section.clueGroups)
+            for (const clue of getClues(group))
+                for (const match of getSubjects(clue))
+                    items.push({
+                        subject: match,
+                        helpText: group.description
+                    });
+
+        return items;
+    }
+    
+    const embFileClueListItems = buildClueArr<EmbeddedFileMatchesClue, EmbeddedFile>(
+        group => group.embeddedFileMatchesClues ?? [],
+        clue => clue.matches ?? []
+    );
+
+    const objClueListItems = buildClueArr<ObjectPresenceClue, ObjectPresenceClue>(
+        group => group.objPresenceClues ?? [],
+        clue => [clue]
+    );
+
+    const strParamClueListItems = buildClueArr<StringMatchesClue, string>(
+        group => group.strParamMatchesClues ?? [],
+        clue => clue.matches ?? []
+    );
+    const ccClueListItems = buildClueArr<StringMatchesClue, string>(
+        group => group.ccMatchesClues ?? [],
+        clue => clue.matches ?? []
+    );
+    const urlClueListItems = buildClueArr<StringMatchesClue, string>(
+        group => group.URLMatchesClues ?? [],
+        clue => clue.matches ?? []
+    );
+    
 
     return (
-        <AccordionItem value={name}>
+        <AccordionItem value={section.name}>
             <AccordionTrigger className='flex-row-reverse justify-end hover:no-underline cursor-pointer'>
                 <CountBadge count={contentCount} />
                 {getContentSeverityBadge()}
-                {title}
+                {section.title}
             </AccordionTrigger>
-            <AccordionContent className='flex flex-col gap-3 pl-10 pb-10'>
-                <p className='text-sm text-muted-foreground'>{description}</p>
-                {Boolean(embeddedFilesCount) && <>
-                    <Separator className='opacity-50' />
-                    <ClueFileList entries={analysisData.embeddedFiles as EmbeddedFile[]} />
-                </>}
-                {Boolean(Object.keys(presenceObj).length) && <>
-                    <Separator className='opacity-50' />
-                    <CluePresenceList entries={presenceObj} />
-                </>}
-                {Boolean(strCluesCount) && <>
-                    <Separator className='opacity-50' />
-                    <ClueStrList entries={strArrs} />
-                </>}
+            <AccordionContent className='flex flex-col gap-6 pl-10 pb-10'>
+                <p className='text-sm text-muted-foreground'>{section.description}</p>
+
+                {embFileClueListItems.length > 0 &&
+                    <EmbeddedFileClueList entries={embFileClueListItems} />
+                }
+
+                {objClueListItems.length > 0 &&
+                    <ObjectClueList entries={objClueListItems} />
+                }
+
+                {strParamClueListItems.length > 0 &&
+                    <StrClueList title='String Parameters' entries={strParamClueListItems} />
+                }
+                {ccClueListItems.length > 0 &&
+                    <StrClueList title='Console Commands' entries={ccClueListItems} />
+                }
+                {urlClueListItems.length > 0 &&
+                    <StrClueList title='URLs' entries={urlClueListItems} />
+                }
             </AccordionContent>
         </AccordionItem>
     );
 }
 
 
-interface CluePresenceListProps {
-    entries: Record<string, boolean>
+interface ObjectClueListProps {
+    entries: ClueListItemProps<ObjectPresenceClue>[]
 }
-function CluePresenceList({ entries }: CluePresenceListProps) {
+/** Render a list of object clues */
+function ObjectClueList({ entries }: ObjectClueListProps) {
     return (
-        <div className='flex flex-col gap-1'>
-            <h1 className='text-xl'>Clues</h1>
+        <div className='flex flex-col gap-3'>
+            <h1 className='text-md'>Objects & Names</h1>
             <ul className='list-none pl-5 flex flex-col gap-1'>
-                {Object.entries(entries).map(([k, v]) => (
-                    <CluePresenceListItem key={k} name={k} present={v} />
+                {entries.map((e, idx) => (
+                    <ObjectClueListItem key={idx} subject={e.subject} helpText={e.helpText} />
                 ))}
             </ul>
         </div>
@@ -149,56 +175,138 @@ function CluePresenceList({ entries }: CluePresenceListProps) {
 }
 
 
-interface CluePresenceListItemProps {
-    name: string
-    present: boolean
-}
-function CluePresenceListItem({ name, present }: CluePresenceListItemProps) {
+/**
+ * Render information about an object clue and a checkbox that
+ * specifies if an object of the same kind has been found in the
+ * package.
+ */
+function ObjectClueListItem({ subject, helpText }: ClueListItemProps<ObjectPresenceClue>) {
     return (
         <li className='list-item'>
             <div className="flex items-center gap-3">
-                <Checkbox checked={present} />
-                <p className='wrap-anywhere'>{name}</p>
+                <Checkbox checked={subject.present} />
+                <ObjectInfoBreadcrumb type={subject.type} outerName={subject.outer} objectName={subject.name} helpText={helpText} />
             </div>
         </li>
     );
 }
 
 
-interface ClueStrListProps {
-    entries: Record<string, string[]>
+interface ObjectInfoBreadcrumbProps {
+    /** Object's type */
+    type?: string
+    /** Object outer's name */
+    outerName?: string
+    /** Object's name */
+    objectName: string
+    /** Object description */
+    helpText?: string
 }
-function ClueStrList({ entries }: ClueStrListProps) {
+/** Render an object's heritage as a breadcrumb */
+function ObjectInfoBreadcrumb({ outerName, objectName, helpText, type='object' }: ObjectInfoBreadcrumbProps) {
     return (
-        <ul className='flex flex-col'>
-            {Object.entries(entries).map(([k, v]) => (
-                <li key={k} className='flex flex-col gap-1'>
-                    <h1 className='text-xl'>{k}</h1>
-                    <ul className='list-none pl-5 flex flex-col gap-2'>
-                        {Object.entries(v).map(([k2, v2]) => (
-                            <ClueStrListItem key={k2} s={v2} />
-                        ))}
-                    </ul>
-                </li>
-            ))}
-        </ul>
+        <Breadcrumb>
+            <div className='flex gap-3'>
+                <BreadcrumbList className='gap-0.5!'>
+                    {outerName && (type !== 'package') &&
+                        <>
+                            <ObjectInfoBreadcrumbItem
+                                type={normalizeOuterType(type)}
+                                name={outerName}
+                            />
+                            <BreadcrumbSeparator />
+                        </>
+                    }
+                    <ObjectInfoBreadcrumbItem
+                        type={normalizeObjType(type)}
+                        isMain={true}
+                        name={objectName}
+                    />
+                </BreadcrumbList>
+
+                {helpText &&
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className='scale-90 opacity-40 hover:opacity-100 transition-opacity cursor-help hidden md:block'>
+                                <InfoIcon />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent side='right'>
+                            <p className='font-[Arial]'>{helpText}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                }
+
+            </div>
+        </Breadcrumb>
     );
 }
 
 
-interface ClueStrListItemProps {
-    s: string
+interface ObjectInfoBreadcrumbItemProps {
+    /** Object's heritage part type */
+    type: NormalizedObjectType
+    /** If `true`, this is the last descendent in the object's heritage */
+    isMain?: boolean
+    /** Object's name */
+    name: string
 }
-function ClueStrListItem({ s }: ClueStrListItemProps) {
+/** Render a part of an object's heritage as a breadcrumb item */
+function ObjectInfoBreadcrumbItem({ name, type='object', isMain=false }: ObjectInfoBreadcrumbItemProps) {
+    let TypeIcon = BoxIcon;
+    if (type === 'package') TypeIcon = PackageIcon;
+    else if (type === 'class') TypeIcon = FileBracesCornerIcon;
+    else if (type === 'function') TypeIcon = SquareFunctionIcon;
+
+
+    return (
+        <BreadcrumbItem className={clsx(
+            'flex gap-0.5 rounded hover:text-card-foreground transition-colors cursor-default',
+            {
+                'text-card-foreground': isMain,
+                'text-card-foreground/50': !isMain,
+            }
+        )}>
+            <TypeIcon className='scale-75 opacity-50' />
+            <p>{name}</p>
+        </BreadcrumbItem>
+    );
+}
+
+
+interface StrClueListProps {
+    title: string
+    entries: ClueListItemProps<string>[]
+}
+/** Render a list of strings that have been found in a package */
+function StrClueList({ title, entries }: StrClueListProps) {
+    return (
+        <div className='flex flex-col gap-3'>
+            <h1 className='text-md'>{title}</h1>
+            <ul className='list-none pl-5 flex flex-col gap-1'>
+                {entries.map((e, idx) => (
+                    <StrClueListItem key={idx} subject={e.subject} helpText={e.helpText} />
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+
+/**
+ * Render a string that has been found in a package, and a button
+ * to copy it
+ */
+function StrClueListItem({ subject, helpText }: ClueListItemProps<string>) {
     const copyStr = () => {
-        navigator.clipboard.writeText(s);
+        navigator.clipboard.writeText(subject);
         toast.success("String copied!");
     };
 
 
     return (
         <li className='flex w-fit px-2 py-1 gap-1 italic rounded bg-gray-800'>
-            <p className='italic wrap-anywhere'>{s}</p>
+            <p className='italic wrap-anywhere'>{subject}</p>
             <Button
                 onClick={copyStr}
                 variant='ghost'
@@ -211,16 +319,20 @@ function ClueStrListItem({ s }: ClueStrListItemProps) {
 }
 
 
-interface ClueFileListProps {
-    entries: EmbeddedFile[]
+interface EmbeddedFileClueListProps {
+    entries: ClueListItemProps<EmbeddedFile>[]
 }
-function ClueFileList({ entries }: ClueFileListProps) {
+/**
+ * Component to render a list of files that have been found embedded in a
+ * package.
+ */
+function EmbeddedFileClueList({ entries }: EmbeddedFileClueListProps) {
     return (
         <div className='flex flex-col gap-2.5'>
             <h1 className='text-xl'>Embedded Files</h1>
             <ul className='list-none pl-5 flex flex-wrap gap-2.5 wrap-anywhere'>
-                {entries.map((f, idx) => (
-                    <ClueFileListItem key={idx} embFile={f} />
+                {entries.map((e, idx) => (
+                    <EmbeddedFileClueListItem key={idx} subject={e.subject} helpText={e.helpText} />
                 ))}
             </ul>
         </div>
@@ -228,12 +340,13 @@ function ClueFileList({ entries }: ClueFileListProps) {
 }
 
 
-interface ClueFileListItemProps {
-    embFile: EmbeddedFile
-}
-function ClueFileListItem({ embFile }: ClueFileListItemProps) {
+/**
+ * Component to render a file that has been found embedded in a package,
+ * and a button to download it
+ */
+function EmbeddedFileClueListItem({ subject, helpText }: ClueListItemProps<EmbeddedFile>) {
     function dloadFile() {
-        const file = new File([embFile.content], embFile.name);
+        const file = new File([subject.content], subject.name);
         const anchor = document.createElement('a');
         anchor.href = URL.createObjectURL(file);
         anchor.click();
@@ -253,9 +366,9 @@ function ClueFileListItem({ embFile }: ClueFileListItemProps) {
                         <Download />
                     </Button>
                     <div className='flex flex-col'>
-                        <p>{embFile.name}</p>
+                        <p>{subject.name}</p>
                         <div className='flex flex-nowrap gap-[.25ch] text-muted-foreground'>
-                            <p>{Math.round(embFile.size / 1000)}</p>
+                            <p>{Math.round(subject.size / 1000)}</p>
                             <p>Kb</p>
                         </div>
                     </div>
@@ -263,6 +376,40 @@ function ClueFileListItem({ embFile }: ClueFileListItemProps) {
             </Card>
         </li>
     );
+}
+
+
+interface GUIDDisplayProps {
+    guid?: string
+}
+/** 
+ * Component to render a package's GUID in a card and a button to copy
+ * it
+ */
+function GUIDDisplay({ guid }: GUIDDisplayProps) {
+    const copyGUID = () => {
+        navigator.clipboard.writeText(guid as string);
+        toast.success("Package's GUID copied!");
+    };
+
+
+    return (
+        <div className='flex items-center gap-2 text-sm'>
+            <p>GUID</p>
+            <Card className='flex flex-row items-center p-2 gap-3 text-muted-foreground'>
+                <p className='wrap-anywhere'>{guid ?? 'Not available'}</p>
+                {guid &&
+                    <Button
+                        variant='ghost'
+                        className="p-0 w-5 h-auto cursor-pointer opacity-50"
+                        onClick={copyGUID}
+                    >
+                        <Copy className='transform scale-x-[-1] rotate-180' />
+                    </Button>
+                }
+            </Card>
+        </div>
+    )
 }
 
 

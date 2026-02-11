@@ -3,158 +3,139 @@ import UTReader from '@/lib/third_party/UTPackage.js/UTReader';
 
 import { extractEmbeddedFiles, findBuiltInImport, findName, findStr } from "@/lib/package_utils";
 
-import commonContentData from '@/data/commonPackageContentData.json';
+import pkgAsysSectionsData from '@/data/packageAnalysisSectionsData';
 
 
 
 /** Check a package for suspicious content and return the results */
 async function analyzePkg(pkg: UTReader.reader) {
-    const embFiles: EmbeddedFile[] = [];
-    for (const d of extractEmbeddedFiles({ pkg })) {
-        // 'extractEmbeddedFiles' appends the extension
-        const ext = (d.name.split('.').pop() as string).toLowerCase();
-        if (!commonContentData.musicFileExtensions.includes(ext)) {
-            // The file doesn't look like a music file
-            embFiles.push({
-                name: d.name,
-                ext,
-                size: d.size,
-                content: await d.arrayBuffer()
-            });
-        }
-    }
 
-
-    /** Return true if an object is present in the package */
-    const hasObj = (name: string, type?: string, outer?: string) => (
-        Boolean(findBuiltInImport({pkg, outer, type, name}))
+    /**
+     * Return true if a filename extension respects inclusion and exclusion
+     * clue criteria
+     */
+    const isValidExt = (ext: string, clue: EmbeddedFileMatchesClue) => (
+        (!clue.includedExtensions.length || clue.includedExtensions.includes(ext))
+        && (!clue.excludedExtensions.length || !clue.excludedExtensions.includes(ext))
     );
 
-    /** Return true if a name is present in the package's name table */
-    const hasName = (name: string) => (
-        Boolean(findName(pkg, name))
+    /**
+     * Return true if an object or name that follows a clue criteria
+     * is present in the package or name table
+     */
+    const hasObj = (clue: ObjectPresenceClue) => (
+        clue.outer
+            ?
+                Boolean(findBuiltInImport({
+                    pkg,
+                    outer: clue.outer,
+                    type: clue.type,
+                    name: clue.name,
+                }))
+            :
+                Boolean(findName(pkg, clue.name,))
     );
 
-    /** Return true if a string is present in the package */
-    const hasStr = (s: string) => (
-        Boolean(findStr({pkg, s, fromStart: true, toEnd: true}).length)
-    );
-    /** Return true if a string is present in the package */
-    const hasStrStart = (s: string) => (
-        Boolean(findStr({pkg, s, fromStart: true}).length)
-    );
-    /** Return true if a string is present in the package */
-    const hasSubStr = (s: string) => (
-        Boolean(findStr({pkg, s}).length)
-    );
-
-    /** Return URL-formatted strings present in the package */
-    const findUrls = () => [
-        ...findStr({pkg, s: 'http://', fromStart: true}).map(m => m[1]),
-        ...findStr({pkg, s: 'https://', fromStart: true}).map(m => m[1]),
-    ];
-
-    /** Return suspicious console commands present in the package */
-    const findConsoleCmds = () => [
-        ...findStr({pkg, s: 'get ini:', fromStart: true}).map(m => m[1]),
-        ...findStr({pkg, s: 'set ini:', fromStart: true}).map(m => m[1]),
-    ];
+    /** Return an array of strings that follow a clue criteria in the package */
+    const getStrings = (clue: StringMatchesClue) => {
+        type AvailableParts = StringMatchesClue['part'][];
+        return findStr({
+            pkg,
+            s: clue.substring,
+            fromStart: (['left', 'whole'] as AvailableParts).includes(clue.part),
+            toEnd: (['right', 'whole'] as AvailableParts).includes(clue.part),
+        }).map(m => m[1]);
+    };
 
 
     const asys: PackageAnalysis = {
-        embeddedFiles: embFiles,
-        fileReadingClues: {
-            includeBinaryFile: hasObj('includeBinaryFile', 'Function', 'WebResponse'),
-            includePath: hasObj('includePath', 'StrProperty', 'WebResponse'),
-            webResponse: hasObj('WebResponse', 'Class', 'UWeb'),
-            sendBinary: hasObj('sendBinary', 'Function', 'WebResponse'),
-        },
-        fileWritingClues: {
-            statLog: hasObj('StatLog', 'Class', 'Engine'),
-            statLogFile: hasObj('StatLogFile', 'Class', 'Engine'),
-            saveTimeDemo: hasName('saveTimeDemo'),
-        },
-        fileExecutingClues: {
-            localBatcherURL: hasObj('localBatcherURL', 'StrProperty', 'StatLog'),
-            worldBatcherURL: hasObj('worldBatcherURL', 'StrProperty', 'StatLog'),
-            worldBatcherParams: hasObj('worldBatcherParams', 'StrProperty', 'StatLog'),
-            localLogDir: hasObj('localLogDir', 'StrProperty', 'StatLog'),
-            executeLocalLogBatcher: hasObj('ExecuteLocalLogBatcher', 'Function', 'StatLog'),
-            executeWorldLogBatcher: hasObj('ExecuteWorldLogBatcher', 'Function', 'StatLog'),
-            executeSilentLogBatcher: hasObj('executeSilentLogBatcher', 'Function', 'StatLog'),
-            batchLocal: hasObj('batchLocal', 'Function', 'StatLog'),
-            fileProtocol: hasStrStart('file:///'),
-        },
-        consoleReadingClues: {
-            typedStr: hasObj('typedStr', 'StrProperty', 'Console'),
-            history: hasObj('history', 'StrProperty', 'Console'),
-            eInputKey: hasObj('EInputKey', 'Enum', 'Console'),
-            eInputAction: hasObj('EInputAction', 'Enum', 'Console'),
-            keyEvent: hasObj('keyEvent', 'Function', 'Console'),
-        },
-        urls: findUrls(),
-        readsFromClipboard: hasName('pasteFromClipboard'),
-        takesScreenshots: hasStr('shot') || hasName('sshot'),
-        accessesEntryLevel: hasObj('getEntryLevel', 'Function', 'PlayerPawn'),
-        accessesMenuWindow: hasObj('UMenuRootWindow', 'Class', 'UWindow'),
-        accessesRootWindow: hasObj('UWindowRootWindow', 'Class', 'UWindow'),
-        accessesConsole: hasObj('WindowConsole', 'Class', 'UWindow'),
-        consoleCommands: findConsoleCmds(),
-        readsComputerName: hasObj('computerName', 'StrProperty', 'LevelInfo'),
-        opensOSWindow: hasName('badParameters'),
-        extractsEmbeddedFiles: hasSubStr('BatchExportCommandlet'),
+        sections: Array.from(pkgAsysSectionsData)
     };
+
     
+    const embFiles = extractEmbeddedFiles({ pkg });
+
+    for (const sec of asys.sections) {
+        for (const clueGroup of sec.clueGroups) {
+            // Look for matches for all the clue types.
+            
+            for (const embFileMatchesClue of clueGroup.embeddedFileMatchesClues ?? []) {
+                embFileMatchesClue.matches = [];
+                for (const f of embFiles) {
+                    // 'extractEmbeddedFiles' appends the extension
+                    const ext = (f.name.split('.').pop() as string).toLowerCase();
+                    if (isValidExt(ext, embFileMatchesClue)) {
+                        embFileMatchesClue.matches.push({
+                            name: f.name,
+                            ext,
+                            size: f.size,
+                            content: await f.arrayBuffer()
+                        });
+                    }
+                }
+            }
+
+            clueGroup.objPresenceClues?.map(c => c.present = hasObj(c));
+
+            const strMatchesClues = [
+                ...(clueGroup.strParamMatchesClues ?? []),
+                ...(clueGroup.ccMatchesClues ?? []),
+                ...(clueGroup.URLMatchesClues ?? []),
+            ];
+            strMatchesClues?.map(c => c.matches = getStrings(c));
+        }
+    }
+
     return asys;
 }
 
 
-/** Get every boolean entry from analysis data */
-function getPresenceEntries(data: Partial<PackageAnalysis>): Record<string, boolean> {
-    const entries: [string, boolean][] = [];
+/**
+ * Get the count of presence clues which have `present` set to `true`
+ * within an analysis section
+ */
+function getPresencesCount(analysisSection: PackageAnalysisSection) {
+    let count = 0;
 
-    for (const [k, v] of Object.entries(data))
-        if (typeof v === 'boolean') {
-            entries.push([k, v]);
-        } else if (v && typeof v === 'object') {
-            for (const [subK, subV] of Object.entries(v))
-                if (typeof subV === 'boolean')
-                    entries.push([subK, subV]);
-        }
+    for (const group of analysisSection.clueGroups)
+        count += [
+            ...(group.objPresenceClues ?? []),
+        ]?.filter(c => c.present).length ?? 0;
 
-    return Object.fromEntries(entries);
+    return count;
 }
 
 
-function getStrArrays(data: Partial<PackageAnalysis>): Record<string, string[]> {
-    const entries: [string, string[]][] = [];
+/**
+ * Get the count of matches clues which have a non-empty `matches`
+ * array within an analysis section
+ */
+function getMatchesCount(analysisSection: PackageAnalysisSection) {
+    let count = 0;
 
-    for (const [k, v] of Object.entries(data))
-        if (Array.isArray(v) && v.length && (typeof v[0] === 'string')) {
-            entries.push([k, v as string[]]);
-        } else if (v && typeof v === 'object') {
-            for (const [subK, subV] of Object.entries(v))
-                if (Array.isArray(subV) && subV.length && (typeof subV[0] === 'string'))
-                    entries.push([subK, subV as string[]]);
-        }
-
-    return Object.fromEntries(entries);
+    for (const group of analysisSection.clueGroups)
+        count += [
+            ...(group.embeddedFileMatchesClues ?? []),
+            ...(group.strParamMatchesClues ?? []),
+            ...(group.ccMatchesClues ?? []),
+            ...(group.URLMatchesClues ?? []),
+        ]?.reduce((prev, cur) => prev + (cur.matches?.length ?? 0), 0);
+    
+    return count;
 }
 
 
-function getContentCounts(data: Partial<PackageAnalysis>) {
-const presenceObj = getPresenceEntries(data);
-    const strArrs = getStrArrays(data);
-
-    const presentCluesCount = Object.values(presenceObj).filter(p => p).length;
-    const strCluesCount = Object.keys(strArrs).length;
-    const embeddedFilesCount = data.embeddedFiles?.length ?? 0;
+/**
+ * Get the count of presence and matches evidences within an analysis section
+ */
+function getCluesCount(analysisSection: PackageAnalysisSection) {
+    const presencesCount = getPresencesCount(analysisSection);
+    const matchesCount = getMatchesCount(analysisSection);
     
     return {
-        presentCluesCount,
-        strCluesCount,
-        embeddedFilesCount,
-        contentCount: presentCluesCount + strCluesCount + embeddedFilesCount
+        presencesCount,
+        matchesCount,
+        contentCount: presencesCount + matchesCount
     }
 }
 
@@ -162,7 +143,5 @@ const presenceObj = getPresenceEntries(data);
 
 export {
     analyzePkg,
-    getPresenceEntries,
-    getStrArrays,
-    getContentCounts,
+    getCluesCount,
 }

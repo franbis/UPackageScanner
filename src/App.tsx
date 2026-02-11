@@ -13,6 +13,7 @@ import PackageDropzone from '@/components/PackageDropzone';
 import PackageAnalysisViewSelector from '@/components/PackageAnalysisViewSelector';
 
 import { ArrowDown } from 'lucide-react';
+import { TooltipProvider } from './components/ui/tooltip';
 
 
 
@@ -31,44 +32,46 @@ function App() {
 	
 
 	return (<>
-		<main className='flex flex-col lg:block dark bg-background text-foreground w-full h-full font-[Arial]'>
-			<div className='flex w-full px-4 pt-4 lg:fixed'>
-				<OfflineAppBadge />
-				<div className='grow'></div>
-				<OpenSourceLink />
-			</div>
+		<TooltipProvider>
+			<main className='flex flex-col lg:block dark bg-background text-foreground w-full h-full font-[Arial]'>
+				<div className='flex w-full px-4 pt-4 lg:fixed'>
+					<OfflineAppBadge />
+					<div className='grow'></div>
+					<OpenSourceLink />
+				</div>
 
-			<div className='flex flex-col lg:flex-row w-full h-full items-center gap-7 lg:gap-0 lg:justify-evenly'>
-				<PackagesContext.Provider value={{
-					analyzedPkgs, setAnalyzedPkgs
-				}}>
-					<div className='flex flex-col gap-10 px-2 lg:px-0 mt-[15%] lg:mt-0 justify-center items-center'>
-						<Header />
-						<PackageDropzone />
-					</div>
+				<div className='flex flex-col lg:flex-row w-full h-full items-center gap-7 lg:gap-0 lg:justify-evenly'>
+					<PackagesContext.Provider value={{
+						analyzedPkgs, setAnalyzedPkgs
+					}}>
+						<div className='flex flex-col gap-10 px-2 lg:px-0 mt-[15%] lg:mt-0 justify-center items-center'>
+							<Header />
+							<PackageDropzone />
+						</div>
 
-					<Separator orientation='vertical' className='h-[80%]! hidden lg:block' />
-					<Button
-						onClick={scrollToSelector}
-						variant='secondary'
-						className='rounded-full w-10 h-10 p-1.5 text-muted-foreground cursor-pointer block md:hidden'
-						asChild
-					>
-						<ArrowDown />
-					</Button>
+						<Separator orientation='vertical' className='h-[80%]! hidden lg:block' />
+						<Button
+							onClick={scrollToSelector}
+							variant='secondary'
+							className='rounded-full w-10 h-10 p-1.5 text-muted-foreground cursor-pointer block md:hidden'
+							asChild
+						>
+							<ArrowDown />
+						</Button>
 
-					 <div ref={selectorRef} className='p-2 lg:p-0 w-screen h-screen lg:w-[40%] lg:h-[85%]'>
-						<PackageAnalysisViewSelector />
-					</div>
-				</PackagesContext.Provider>
-			</div>
-		</main>
+						<div ref={selectorRef} className='p-2 lg:p-0 w-screen h-screen lg:w-[40%] lg:h-[85%]'>
+							<PackageAnalysisViewSelector />
+						</div>
+					</PackagesContext.Provider>
+				</div>
+			</main>
 
-		<ToastContainer
-			position="bottom-left"
-			theme="dark"
-			transition={Zoom}
-		/>
+			<ToastContainer
+				position="bottom-left"
+				theme="dark"
+				transition={Zoom}
+			/>
+		</TooltipProvider>
 	</>)
 }
 
