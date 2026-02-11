@@ -64,10 +64,13 @@ const fileEmbeddingClueGroups: ClueGroup[] = [
         embeddedFileMatchesClues: [
             embFileClues.nonMusicFiles,
         ],
+    },
+    {
+        description: 'May extract embedded files',
         strParamMatchesClues: [
             strParamClues.BatchExportCommandlet,
         ],
-    }
+    },
 ];
 
 /** Features that, if present in a package, can be seen as
