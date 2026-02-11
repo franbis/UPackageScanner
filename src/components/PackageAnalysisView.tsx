@@ -167,7 +167,7 @@ function ObjectClueList({ entries }: ObjectClueListProps) {
     return (
         <div className='flex flex-col gap-3'>
             <h1 className='text-md'>Objects & Names</h1>
-            <ul className='list-none pl-5 flex flex-col gap-1'>
+            <ul className='list-none pl-5 flex flex-col md:gap-1 gap-3'>
                 {entries.map((e, idx) => (
                     <ObjectClueListItem key={idx} subject={e.subject} helpText={e.helpText} />
                 ))}
@@ -216,7 +216,7 @@ function ObjectInfoBreadcrumb({ outerName, objectName, helpText, type='object' }
                                 type={normalizeOuterType(type)}
                                 name={outerName}
                             />
-                            <BreadcrumbSeparator />
+                            <BreadcrumbSeparator className='hidden md:flex' />
                         </>
                     }
                     <ObjectInfoBreadcrumbItem
@@ -252,11 +252,11 @@ function ObjectInfoBreadcrumbItem({ name, type='object', isMain=false }: ObjectI
             'flex gap-0.5 rounded hover:text-card-foreground transition-colors cursor-default',
             {
                 'text-card-foreground': isMain,
-                'text-card-foreground/50': !isMain,
+                'text-card-foreground/50 hidden md:flex': !isMain,
             }
         )}>
             <TypeIcon className='scale-75 opacity-50' />
-            <p>{name}</p>
+            <p className='wrap-anywhere'>{name}</p>
         </BreadcrumbItem>
     );
 }
