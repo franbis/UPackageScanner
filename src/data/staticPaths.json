@@ -1,0 +1,8 @@
+{
+    "markdownFiles": {
+        "overview": "/info/Overview.md"
+    },
+    "examplePackages": {
+        "tester": "/examples/packages/UPSTester.u"
+    }
+}

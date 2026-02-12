@@ -9,7 +9,7 @@ import ViewSelector from "@/components/ViewSelector";
 import PackageAnalysisView from "@/components/PackageAnalysisView";
 import MarkdownFileView from "@/components/MarkdownFileView";
 
-import markdownPaths from '@/data/markdownPaths.json';
+import staticPaths from '@/data/staticPaths.json';
 
 
 
@@ -33,9 +33,9 @@ function PackageAnalysisViewSelector() {
         // Prepend the overview view.
         viewNodes.unshift({
             // Get the filename
-            tabName: basename(markdownPaths.overview) as string,
+            tabName: basename(staticPaths.markdownFiles.overview) as string,
             onTabClose: () => setOverviewTabActive(false),
-            viewNode: <MarkdownFileView uri={markdownPaths.overview} />
+            viewNode: <MarkdownFileView uri={staticPaths.markdownFiles.overview} />
         });
     }
 

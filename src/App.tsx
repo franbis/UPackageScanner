@@ -11,9 +11,12 @@ import Header from '@/components/Header';
 import OpenSourceLink from '@/components/OpenSourceLink';
 import PackageDropzone from '@/components/PackageDropzone';
 import PackageAnalysisViewSelector from '@/components/PackageAnalysisViewSelector';
+import DraggablePackage from '@/components/DraggablePackage';
 
 import { ArrowDown } from 'lucide-react';
 import { TooltipProvider } from './components/ui/tooltip';
+
+import staticPaths from '@/data/staticPaths.json';
 
 
 
@@ -44,9 +47,12 @@ function App() {
 					<PackagesContext.Provider value={{
 						analyzedPkgs, setAnalyzedPkgs
 					}}>
-						<div className='flex flex-col gap-10 px-2 lg:px-0 mt-[15%] lg:mt-0 justify-center items-center'>
+						<div className='flex flex-col relative gap-10 px-2 lg:px-0 mt-[15%] lg:mt-0 justify-center items-center'>
 							<Header />
 							<PackageDropzone />
+							<div className='absolute bottom-0 right-[-1em] -rotate-5 bg-background p-1'>
+								<DraggablePackage path={staticPaths.examplePackages.tester} />
+							</div>
 						</div>
 
 						<Separator orientation='vertical' className='h-[80%]! hidden lg:block' />
