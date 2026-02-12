@@ -49,7 +49,7 @@ async function analyzePkg(pkg: UTReader.reader) {
 
 
     const asys: PackageAnalysis = {
-        sections: Array.from(pkgAsysSectionsData)
+        sections: structuredClone(pkgAsysSectionsData)
     };
 
     
