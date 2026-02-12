@@ -142,7 +142,7 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
                                 <EmbeddedFileClueList entries={embFileClueListItems} />
                             }
 
-                            {objClueListItems.length > 0 &&
+                            {objClueListItems.filter(c => c.subject.present).length > 0 &&
                                 <ObjectClueList entries={objClueListItems} />
                             }
 
