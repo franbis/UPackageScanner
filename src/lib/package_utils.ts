@@ -116,16 +116,14 @@ function findStr({
     // contain regex special characters.
     s = s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    if (!caseSensitive) {
-        dataStr = dataStr.toLowerCase();
-        s = s.toLowerCase();
-    }
-
     const partial = '[^\\x00]*';
     const reStart = fromStart ? '' : partial;
     const reEnd = toEnd ? '' : partial;
 
-    const re = new RegExp(`\\x1F(${reStart}${s}${reEnd})\\x00`, 'g');
+    const re = new RegExp(
+        `\\x1F(${reStart}${s}${reEnd})\\x00`,
+        'g' + (caseSensitive ? 'i' : '')
+    );
 
     return Array.from(dataStr.matchAll(re));
 }

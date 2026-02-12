@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { getCluesCount } from "@/lib/analysis_utils";
 
 import { Button } from "@/components/ui/button";
@@ -5,8 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
+import { WithTooltip } from "@/components/GeneralWrappers";
 import { CountBadge, DangerousBadge, NeutralBadge, SuspiciousBadge } from "@/components/Badges";
 import BaseView from "@/components/BaseView";
 
@@ -14,7 +16,7 @@ import clsx from "clsx";
 
 import { toast } from "react-toastify";
 
-import { BoxIcon, Copy, Download, FileBracesCornerIcon, InfoIcon, PackageIcon, SquareFunctionIcon } from "lucide-react";
+import { BoxIcon, Copy, Download, FileBracesCornerIcon, PackageIcon, SquareFunctionIcon } from "lucide-react";
 import { normalizeObjType, normalizeOuterType } from "@/lib/package_utils";
 
 
@@ -73,10 +75,6 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
         if (section.contentSeverity === 'dangerous') return <DangerousBadge className='hidden lg:inline-flex' />;
     };
 
-
-    const { contentCount } = getCluesCount(section);
-
-
     /**
      * Return an array of clue items of which subjects are of type `S`
      * 
@@ -99,6 +97,9 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
 
         return items;
     }
+
+
+    const { contentCount } = getCluesCount(section);
     
     const embFileClueListItems = buildClueArr<EmbeddedFileMatchesClue, EmbeddedFile>(
         group => group.embeddedFileMatchesClues ?? [],
@@ -134,22 +135,33 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
             <AccordionContent className='flex flex-col gap-6 pl-10 pb-10'>
                 <p className='text-sm text-muted-foreground'>{section.description}</p>
 
-                {embFileClueListItems.length > 0 &&
-                    <EmbeddedFileClueList entries={embFileClueListItems} />
-                }
+                {contentCount
+                    ?
+                        <>
+                            {embFileClueListItems.length > 0 &&
+                                <EmbeddedFileClueList entries={embFileClueListItems} />
+                            }
 
-                {objClueListItems.length > 0 &&
-                    <ObjectClueList entries={objClueListItems} />
-                }
+                            {objClueListItems.filter(c => c.subject.present).length > 0 &&
+                                <ObjectClueList entries={objClueListItems} />
+                            }
 
-                {strParamClueListItems.length > 0 &&
-                    <StrClueList title='String Parameters' entries={strParamClueListItems} />
-                }
-                {ccClueListItems.length > 0 &&
-                    <StrClueList title='Console Commands' entries={ccClueListItems} />
-                }
-                {urlClueListItems.length > 0 &&
-                    <StrClueList title='URLs' entries={urlClueListItems} />
+                            {strParamClueListItems.length > 0 &&
+                                <StrClueList title='String Parameters' entries={strParamClueListItems} />
+                            }
+                            {ccClueListItems.length > 0 &&
+                                <StrClueList title='Console Commands' entries={ccClueListItems} />
+                            }
+                            {urlClueListItems.length > 0 &&
+                                <StrClueList title='URLs' entries={urlClueListItems} />
+                            }
+                        </>
+                    :
+                        <div className='flex justify-center w-full'>
+                            <h1 className='pr-20 text-justify text-muted-foreground/50 text-[1.25em]'>
+                                No suspicious content of this category was found in the package
+                            </h1>
+                        </div>
                 }
             </AccordionContent>
         </AccordionItem>
@@ -165,7 +177,7 @@ function ObjectClueList({ entries }: ObjectClueListProps) {
     return (
         <div className='flex flex-col gap-3'>
             <h1 className='text-md'>Objects & Names</h1>
-            <ul className='list-none pl-5 flex flex-col gap-1'>
+            <ul className='list-none pl-5 flex flex-col md:gap-1 gap-3'>
                 {entries.map((e, idx) => (
                     <ObjectClueListItem key={idx} subject={e.subject} helpText={e.helpText} />
                 ))}
@@ -206,7 +218,7 @@ interface ObjectInfoBreadcrumbProps {
 function ObjectInfoBreadcrumb({ outerName, objectName, helpText, type='object' }: ObjectInfoBreadcrumbProps) {
     return (
         <Breadcrumb>
-            <div className='flex gap-3'>
+            <WithTooltip tooltipText={helpText}>
                 <BreadcrumbList className='gap-0.5!'>
                     {outerName && (type !== 'package') &&
                         <>
@@ -214,7 +226,7 @@ function ObjectInfoBreadcrumb({ outerName, objectName, helpText, type='object' }
                                 type={normalizeOuterType(type)}
                                 name={outerName}
                             />
-                            <BreadcrumbSeparator />
+                            <BreadcrumbSeparator className='hidden md:flex' />
                         </>
                     }
                     <ObjectInfoBreadcrumbItem
@@ -223,21 +235,7 @@ function ObjectInfoBreadcrumb({ outerName, objectName, helpText, type='object' }
                         name={objectName}
                     />
                 </BreadcrumbList>
-
-                {helpText &&
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div className='scale-90 opacity-40 hover:opacity-100 transition-opacity cursor-help hidden md:block'>
-                                <InfoIcon />
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent side='right'>
-                            <p className='font-[Arial]'>{helpText}</p>
-                        </TooltipContent>
-                    </Tooltip>
-                }
-
-            </div>
+            </WithTooltip>
         </Breadcrumb>
     );
 }
@@ -264,11 +262,11 @@ function ObjectInfoBreadcrumbItem({ name, type='object', isMain=false }: ObjectI
             'flex gap-0.5 rounded hover:text-card-foreground transition-colors cursor-default',
             {
                 'text-card-foreground': isMain,
-                'text-card-foreground/50': !isMain,
+                'text-card-foreground/50 hidden md:flex': !isMain,
             }
         )}>
             <TypeIcon className='scale-75 opacity-50' />
-            <p>{name}</p>
+            <p className='wrap-anywhere'>{name}</p>
         </BreadcrumbItem>
     );
 }
@@ -305,15 +303,19 @@ function StrClueListItem({ subject, helpText }: ClueListItemProps<string>) {
 
 
     return (
-        <li className='flex w-fit px-2 py-1 gap-1 italic rounded bg-gray-800'>
-            <p className='italic wrap-anywhere'>{subject}</p>
-            <Button
-                onClick={copyStr}
-                variant='ghost'
-                className="p-0 w-5 h-auto cursor-pointer opacity-50"
-            >
-                <Copy className='transform scale-x-[-1] rotate-180' />
-            </Button>
+        <li className='flex gap-3 items-center'>
+            <WithTooltip tooltipText={helpText}>
+                <div className='flex w-fit px-2 py-1 gap-1 italic rounded bg-gray-800'>
+                    <p className='italic wrap-anywhere'>{subject}</p>
+                    <Button
+                        onClick={copyStr}
+                        variant='ghost'
+                        className="p-0 w-5 h-auto cursor-pointer opacity-50"
+                    >
+                        <Copy className='transform scale-x-[-1] rotate-180' />
+                    </Button>
+                </div>
+            </WithTooltip>
         </li>
     );
 }

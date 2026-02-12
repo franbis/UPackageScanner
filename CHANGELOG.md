@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 2.1.0 (2026-02-12)
+
+* Fix the most recent analyses results being shared among all packages 
+
+
 ### 2.0.0 (2026-02-11)
 
 * Generalize clue interfaces to allow any clue rather than a fixed set
