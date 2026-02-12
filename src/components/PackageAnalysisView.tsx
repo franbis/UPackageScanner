@@ -75,10 +75,6 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
         if (section.contentSeverity === 'dangerous') return <DangerousBadge className='hidden lg:inline-flex' />;
     };
 
-
-    const { contentCount } = getCluesCount(section);
-
-
     /**
      * Return an array of clue items of which subjects are of type `S`
      * 
@@ -101,6 +97,9 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
 
         return items;
     }
+
+
+    const { contentCount } = getCluesCount(section);
     
     const embFileClueListItems = buildClueArr<EmbeddedFileMatchesClue, EmbeddedFile>(
         group => group.embeddedFileMatchesClues ?? [],
@@ -136,22 +135,33 @@ function PackageAnalysisViewSection({ section }: PackageAnalysisViewSectionProps
             <AccordionContent className='flex flex-col gap-6 pl-10 pb-10'>
                 <p className='text-sm text-muted-foreground'>{section.description}</p>
 
-                {embFileClueListItems.length > 0 &&
-                    <EmbeddedFileClueList entries={embFileClueListItems} />
-                }
+                {contentCount
+                    ?
+                        <>
+                            {embFileClueListItems.length > 0 &&
+                                <EmbeddedFileClueList entries={embFileClueListItems} />
+                            }
 
-                {objClueListItems.length > 0 &&
-                    <ObjectClueList entries={objClueListItems} />
-                }
+                            {objClueListItems.length > 0 &&
+                                <ObjectClueList entries={objClueListItems} />
+                            }
 
-                {strParamClueListItems.length > 0 &&
-                    <StrClueList title='String Parameters' entries={strParamClueListItems} />
-                }
-                {ccClueListItems.length > 0 &&
-                    <StrClueList title='Console Commands' entries={ccClueListItems} />
-                }
-                {urlClueListItems.length > 0 &&
-                    <StrClueList title='URLs' entries={urlClueListItems} />
+                            {strParamClueListItems.length > 0 &&
+                                <StrClueList title='String Parameters' entries={strParamClueListItems} />
+                            }
+                            {ccClueListItems.length > 0 &&
+                                <StrClueList title='Console Commands' entries={ccClueListItems} />
+                            }
+                            {urlClueListItems.length > 0 &&
+                                <StrClueList title='URLs' entries={urlClueListItems} />
+                            }
+                        </>
+                    :
+                        <div className='flex justify-center w-full'>
+                            <h1 className='pr-20 text-justify text-muted-foreground/50 text-[1.25em]'>
+                                No suspicious content of this category was found in the package
+                            </h1>
+                        </div>
                 }
             </AccordionContent>
         </AccordionItem>
