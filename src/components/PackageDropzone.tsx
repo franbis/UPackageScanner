@@ -1,4 +1,4 @@
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type FileRejection } from "react-dropzone";
 
 import { toast } from "react-toastify";
 
@@ -18,8 +18,22 @@ import { ScanLine } from "lucide-react";
 function PackageDropzone() {
     const { analyzePkg } = useAnalyzedPackages();
     const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles: File[]) => {
-            acceptedFiles.forEach(async (file) => {
+        accept: {
+            'application/octet-stream': [
+                '.u', '.utx', '.uax',
+                '.umx', '.unr', '.run',
+                '.uxx', '.ums',
+                //'.uz', '.umod',
+            ],
+        },
+        onDrop: (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+            // Practically accept all files.
+            const files = [
+                ...acceptedFiles,
+                ...fileRejections.flatMap(r => r.file)
+            ];
+
+            files.forEach(async (file) => {
                 try {
                     const pkg: UTReader.reader = await parsePkg(file);
                     analyzePkg({ filename: file.name, pkg });
