@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 2.2.2 (2026-02-13)
+
+* Fix the download button in the embedded file card opening a browser tab instead of downloading the file
+
+
 ### 2.2.1 (2026-02-13)
 
 * Fix the example package not being loaded by the draggable package element
