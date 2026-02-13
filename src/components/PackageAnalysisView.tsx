@@ -351,6 +351,7 @@ function EmbeddedFileClueListItem({ subject, helpText }: ClueListItemProps<Embed
         const file = new File([subject.content], subject.name);
         const anchor = document.createElement('a');
         anchor.href = URL.createObjectURL(file);
+        anchor.download = subject.name;
         anchor.click();
         URL.revokeObjectURL(anchor.href);
     };
