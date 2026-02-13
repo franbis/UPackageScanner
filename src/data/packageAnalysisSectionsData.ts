@@ -4,7 +4,6 @@ import commonContentData from '@/data/commonPackageContentData.json';
 
 const objClues: Record<string, ObjectPresenceClue> = {
     includeBinaryFile:          { name: 'includeBinaryFile', type: 'Function', outer: 'WebResponse' },
-    includePath:                { name: 'includePath', type: 'StrProperty', outer: 'WebResponse' },
     WebResponse:                { name: 'WebResponse', type: 'Class', outer: 'UWeb' },
     sendBinary:                 { name: 'sendBinary', type: 'Function', outer: 'WebResponse' },
     StatLog:                    { name: 'StatLog', type: 'Class', outer: 'Engine' },
@@ -30,6 +29,7 @@ const objClues: Record<string, ObjectPresenceClue> = {
 };
 
 const nameClues: Record<string, Pick<ObjectPresenceClue, 'name'>> = {
+    includePath:        { name: 'includePath' },
     badParameters:      { name: 'badParameters' },
     saveTimeDemo:       { name: 'saveTimeDemo' },
     pasteFromClipboard: { name: 'pasteFromClipboard' },
@@ -87,7 +87,7 @@ const fileReadingClueGroups: ClueGroup[] = [
     {
         description: 'May allow reading files from any path',
         objPresenceClues: [
-            objClues.includePath,
+            nameClues.includePath,
         ]
     }
 ];
