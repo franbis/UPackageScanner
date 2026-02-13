@@ -1,6 +1,12 @@
 # Changelog
 
 
+### 2.2.0 (2026-02-13)
+
+* Add an example package to test the scanner
+* Create `staticPaths.json` to store app's static paths
+
+
 ### 2.1.0 (2026-02-12)
 
 * Fix the most recent analyses results being shared among all packages 
