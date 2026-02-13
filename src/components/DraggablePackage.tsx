@@ -34,7 +34,7 @@ function DraggablePackage({ path }: DraggablePackageProps) {
         <div
             draggable
             onDragStart={handleDragStart}
-            className='flex-col items-center relative size-15 opacity-75 cursor-grab hidden md:flex'
+            className='flex-col items-center relative size-15 opacity-75 cursor-grab hover:scale-105 transition-all duration-500 hidden md:flex'
         >
             <FileIcon className='size-full' />
             <div className='absolute bottom-[-2em] pt-0.5 text-nowrap text-center bg-background'>
