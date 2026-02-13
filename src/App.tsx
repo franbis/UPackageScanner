@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 
 import { ToastContainer, Zoom } from 'react-toastify';
 
+import { buildURL } from '@/lib/path_utils';
+
 import { PackagesContext } from '@/contexts';
 
 import { Separator } from '@/components/ui/separator';
@@ -51,7 +53,7 @@ function App() {
 							<Header />
 							<PackageDropzone />
 							<div className='absolute bottom-0 right-[-1em] -rotate-5 bg-background p-1'>
-								<DraggablePackage path={staticPaths.examplePackages.tester} />
+								<DraggablePackage path={buildURL(staticPaths.examplePackages.tester)} />
 							</div>
 						</div>
 
