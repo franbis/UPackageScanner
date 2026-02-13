@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 2.2.1 (2026-02-13)
+
+* Fix the example package not being loaded by the draggable package element
+
+
 ### 2.2.0 (2026-02-13)
 
 * Add an example package to test the scanner
