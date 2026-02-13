@@ -8,17 +8,18 @@ import { PackagesContext } from '@/contexts';
 
 import { Separator } from '@/components/ui/separator';
 import { Button } from './components/ui/button';
+import { TooltipProvider } from './components/ui/tooltip';
+
 import { OfflineAppBadge } from '@/components/Badges';
 import Header from '@/components/Header';
 import OpenSourceLink from '@/components/OpenSourceLink';
 import PackageDropzone from '@/components/PackageDropzone';
-import PackageAnalysisViewSelector from '@/components/PackageAnalysisViewSelector';
 import DraggablePackage from '@/components/DraggablePackage';
-
-import { ArrowDown } from 'lucide-react';
-import { TooltipProvider } from './components/ui/tooltip';
+import PackageAnalysisViewSelector from '@/components/PackageAnalysisViewSelector';
 
 import staticPaths from '@/data/staticPaths.json';
+
+import { ArrowDown } from 'lucide-react';
 
 
 
